@@ -41,7 +41,7 @@ mscjs_csmhr = function (x, ddl, dml, model_data = NULL, parameters, accumulate =
   scale = marked:::set.scale(names(dml), model_data, scale)
   model_data = marked:::scale.dm(model_data, scale)
   if (!re) 
-    tpl = "multistate_hazrates"
+    tpl = "multistate_csmhr"
   else stop("random effect portion not completed for this model")
   marked:::setup_admb(tpl, compile, clean, re = FALSE)
   con = file(paste(tpl, ".dat", sep = ""), open = "wt")
