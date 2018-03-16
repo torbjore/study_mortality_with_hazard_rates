@@ -1,7 +1,12 @@
-// Fixed-effect Multi-State Cormack-Jolly-Seber model with unobservable states based on work of Jessica Ford in MEE Dec 2012
-// Jeff Laake; 29 June 2016
-// Modified from original version to split off code to compute dmat and gamma calculations
-// Now allows fixed real parameters and uses simplification
+// Modified version of multistate.tpl
+// Torbjorn Ergon March 2018
+// Assumes that the first state is the 'alive' state and the last state is the 'dead' state. There may be any number (minimum 2) of 'newly dead by given cause' states in between.
+// PSI'S DO NOT HAVE TO BE FIXED (BUT YOU MAY FIX THE TIME-AVERAGED HAZARD RATE FOR ANY OF THE 'newly dead by given cause' states.)
+
+// ORIGINAL COMMENT: Fixed-effect Multi-State Cormack-Jolly-Seber model with unobservable states based on work of Jessica Ford in MEE Dec 2012
+// ORIGINAL COMMENT: Jeff Laake; 29 June 2016
+// ORIGINAL COMMENT: Modified from original version to split off code to compute dmat and gamma calculations
+// ORIGINAL COMMENT: Now allows fixed real parameters and uses simplification
 DATA_SECTION 
     init_int n;                            // number of capture histories
     init_int m;                            // number of capture occasions
@@ -17,7 +22,7 @@ DATA_SECTION
     !! nrows=nS*(m-1);                
     !! all_nrows=n*nrows;                
                                              // last column in each design matrix is either -1 (estimated) or a fixed value
-    init_matrix phidm(1,nrowphi,1,kphi);     // design matrix for Phi
+//    init_matrix phidm(1,nrowphi,1,kphi);     // design matrix for Phi
     init_vector phifix(1,nrowphi);           // phi fixed values
     init_ivector phiindex(1,all_nrows);      // phi indices
     
@@ -38,7 +43,7 @@ DATA_SECTION
     init_ivector psiindex(1,all_nT);         // psi indices
 		
 PARAMETER_SECTION
-    init_vector phibeta(1,kphi);       // parameter vector for Phi
+//    init_vector phibeta(1,kphi);       // parameter vector for Phi
     init_vector pbeta(1,kp);           // parameter vector for p
     init_vector psibeta(1,kpsi);       // parameter vector for p
 	objective_function_value g; 
@@ -49,14 +54,16 @@ PROCEDURE_SECTION
     dvar_vector phi(1,nrows);          // temp vector for Phis for an individual
     dvar_vector uniquep(1,nrowp);      // all unique p values    
     dvar_vector p(1,nrows);            // temp vector for ps for an individual
-    dvar_vector uniquepsi(1,nrowpsi);  // temp vector for psis 
-    dvariable psisum;                  // sum of psi for each state to normalize with
+//    dvar_vector uniquepsi(1,nrowpsi);  // temp vector for psis 
+    dvar_vector haz(1,nrowpsi);        // mortality hazard rates 
+//    dvariable psisum;                  // sum of psi for each state to normalize with
+    dvariable hazsum;                  // sum of psi for each state to normalize with
     dvar3_array psi(1,m-1,1,nS,1,nS);  // matrix for psis for each occasion 
 
     for(j=1;j<=nrowphi;j++)                           // compute all unique phi values
-       if(phifix(j)< -0.5)
-          uniquephi(j)=1/(1+exp(-phidm(j)*phibeta));  // compute phi
-       else
+//       if(phifix(j)< -0.5)
+//          uniquephi(j)=1/(1+exp(-phidm(j)*phibeta));  // compute phi
+//       else
           uniquephi(j)=phifix(j);                     // fixed value
 
     for(j=1;j<=nrowp;j++)                             // compute all unique p values
@@ -68,9 +75,11 @@ PROCEDURE_SECTION
     for(j=1;j<=nrowpsi;j++)
     {
        if(psifix(j) < -0.5)
-           uniquepsi(j)=exp(psidm(j)*psibeta);        // compute exp of psidm*psibeta; these are components of psi
+//           uniquepsi(j)=exp(psidm(j)*psibeta);        // compute exp of psidm*psibeta; these are components of psi
+           haz(j) = exp(psidm(j)*psibeta);        // compute hazard rates as exp of psidm*psibeta
        else
-           uniquepsi(j)=psifix(j);                    // fixed exp Psi value     
+//           uniquepsi(j)=psifix(j);                    // fixed exp Psi value     
+           haz(j)=psifix(j);                    // fixed hazard rate value     
     }  
           
     for(i=1;i<=n;i++)                              // loop over capture histories - one per capture history
@@ -79,18 +88,33 @@ PROCEDURE_SECTION
         bindex=(i-1)*nrows;                        // initialize indices into index values for the ith history
         bindex2=(i-1)*nT;    
 	    for (j=1;j<=m-1;j++)
-	    {                       
-  	       for (k=1;k<=nS;k++)                        
+	    {       
+  	       for(k=1;k<=nS;k++)                        
            {   
 	           p((j-1)*nS+k)=uniquep(pindex(bindex+(j-1)*nS+k));
-               phi((j-1)*nS+k)=pow(uniquephi(phiindex(bindex+(j-1)*nS+k)),tint(i,j));           
-	           psisum=0;
-	           for(k2=1;k2<=nS;k2++)              
-		           psisum=psisum+uniquepsi(psiindex(bindex2+(k-1)*nS+k2));
-  	           for(k2=1;k2<=nS;k2++)
-	               psi(j,k,k2)=uniquepsi(psiindex(bindex2+(k-1)*nS+k2))/psisum;
-	       }
-	       bindex2=bindex2+nS*nS;         
+             phi((j-1)*nS+k)= 1;  //pow(uniquephi(phiindex(bindex+(j-1)*nS+k)),tint(i,j));           
+//	           psisum=0;
+//	           hazsum=0;
+//	           for(k2=1;k2<=nS;k2++)              
+//		           psisum=psisum+uniquepsi(psiindex(bindex2+(k-1)*nS+k2));
+//		           hazsum = hazsum + haz(psiindex(bindex2+(k-1)*nS+k2));
+// 	           for(k2=1;k2<=nS;k2++)
+//	               psi(j,k,k2)=uniquepsi(psiindex(bindex2+(k-1)*nS+k2))/psisum;
+			     }
+			hazsum=0;
+			for(k2=2;k2<=(nS-1);k2++)
+			  hazsum = hazsum + haz(psiindex(bindex2+k2));
+			for(k2=2;k2<=(nS-1);k2++)
+				psi(j,1,k2) = (1-exp(-hazsum)) * haz(psiindex(bindex2+k2))/hazsum;    // Cause specific mortality probabilities
+			bindex2=bindex2+nS*nS;
+			psi(j,1,1) = exp(-hazsum);                                                         // Survival probability
+			psi(j,1,nS) = 0;
+			for(k=2;k<=nS;k++)                                                                 // Filling in the rest of the matrix
+			{
+				for(k2=1;k2<=(nS-1);k2++)
+					psi(j,k,k2) = 0;
+				psi(j,k,nS) = 1;
+			}
         }
          
         ll_i(i,phi,p,psi);                 // compute neg log likelihod and increment

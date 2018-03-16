@@ -1,12 +1,12 @@
-crm = function (data, ddl = NULL, begin.time = 1, model = "CJS", title = "", 
-          model.parameters = list(), design.parameters = list(), initial = NULL, 
-          groups = NULL, time.intervals = NULL, debug = FALSE, method = "BFGS", 
-          hessian = FALSE, accumulate = TRUE, chunk_size = 1e+07, control = list(), 
-          refit = 1, itnmax = 5000, scale = NULL, run = TRUE, burnin = 100, 
-          iter = 1000, use.admb = FALSE, use.tmb = FALSE, crossed = NULL, 
-          reml = FALSE, compile = FALSE, extra.args = NULL, strata.labels = NULL, 
-          clean = NULL, save.matrices = TRUE, simplify = FALSE, getreals = FALSE, 
-          check = FALSE, ...) 
+crm_csmhr = function (data, ddl = NULL, begin.time = 1, model = "MSCJS", title = "", 
+                      model.parameters = list(), design.parameters = list(), initial = NULL, 
+                      groups = NULL, time.intervals = NULL, debug = FALSE, method = "BFGS", 
+                      hessian = FALSE, accumulate = TRUE, chunk_size = 1e+07, control = list(), 
+                      refit = 1, itnmax = 5000, scale = NULL, run = TRUE, burnin = 100, 
+                      iter = 1000, use.admb = FALSE, use.tmb = FALSE, crossed = NULL, 
+                      reml = FALSE, compile = FALSE, extra.args = NULL, strata.labels = NULL, 
+                      clean = NULL, save.matrices = TRUE, simplify = FALSE, getreals = FALSE, 
+                      check = FALSE, csmhr=TRUE, ...) 
 {
   model = toupper(model)
   ptm = proc.time()
@@ -31,11 +31,25 @@ crm = function (data, ddl = NULL, begin.time = 1, model = "CJS", title = "",
     data.proc = data
     model = data$model
   }
+  if(csmhr)
+  {
+    states = levels(ddl$Psi$stratum)
+    fst = states[1]
+    lst = states[length(states)]
+    message("Alive state: ", fst, "; Newly dead states: ", states[2:(length(states)-1)])
+    ddl$Psi$fix[ddl$Psi$stratum == fst & ddl$Psi$tostratum == lst] = 0
+    ddl$Psi$fix[ddl$Psi$stratum != fst] = 1 # NOTE: It does not matter what values you fix to here as the value is reset in the tpl-file by mscjs_csmhr
+    ddl$p$fix[ddl$p$stratum==lst] = 0
+    ddl$S$fix[ddl$S$stratum!=lst] = 1
+    ddl$S$fix[ddl$S$stratum==lst] = 0
+    if(!is.null(model.parameters[["S"]])) warning("Model specification for S is ignored when csmhr == TRUE. Cause specific mortality hazard rates are instead modelled as transition parameters from the 1st state to the other states (Psi = log hazard rates)")
+    model.parameters[["S"]] = list(formula = ~ 0)
+  }
   number.of.groups = 1
   if (!is.null(data.proc$group.covariates)) 
     number.of.groups = nrow(data.proc$group.covariates)
   par.list = setup.parameters(data.proc$model, check = TRUE)
-  if (!valid.parameters(model, model.parameters)) 
+  if (!marked:::valid.parameters(model, model.parameters)) 
     stop()
   parameters = setup.parameters(data.proc$model, model.parameters, 
                                 data$nocc, number.of.groups = number.of.groups)
@@ -44,7 +58,7 @@ crm = function (data, ddl = NULL, begin.time = 1, model = "CJS", title = "",
   for (i in 1:length(parameters)) {
     if (is.null(parameters[[i]]$formula)) 
       parameters[[i]]$formula = ~1
-    mlist = proc.form(parameters[[i]]$formula)
+    mlist = marked:::proc.form(parameters[[i]]$formula)
     if (!is.null(mlist$re.model)) {
       re_names = sub("^\\s+", "", sapply(strsplit(names(mlist$re.model), 
                                                   "\\|"), function(x) x[2]))
@@ -88,9 +102,9 @@ crm = function (data, ddl = NULL, begin.time = 1, model = "CJS", title = "",
                                                                                      design.parameters[[parname]])
       design.parameters = ddl$design.parameters
   }
-  ddl = set.fixed(ddl, parameters)
-  if (model == "MSCJS" | (substr(model, 1, 4) == "MVMS" & use.admb)) 
-    ddl = simplify_ddl(ddl, parameters)
+  ddl = marked:::set.fixed(ddl, parameters)
+  if (model == "CSMHR" | model == "MSCJS" | (substr(model, 1, 4) == "MVMS" & use.admb)) 
+    ddl = marked:::simplify_ddl(ddl, parameters)
   if (substr(model, 1, 4) == "MVMS") {
     if (is.null(ddl$pi$fix)) 
       message("\n No values provided for fix for pi. At least need to set a reference cell")
@@ -148,8 +162,8 @@ crm = function (data, ddl = NULL, begin.time = 1, model = "CJS", title = "",
       stop(paste("Cannot use formula ~0 for", names(parameters)[i], 
                  "when some of the parameters must be estimated"))
   }
-  dml = create.dml(ddl, model.parameters = parameters, design.parameters = design.parameters, 
-                   chunk_size = chunk_size, simplify = simplify, use.admb = use.admb)
+  dml = marked:::create.dml(ddl, model.parameters = parameters, design.parameters = design.parameters, 
+                            chunk_size = chunk_size, simplify = simplify, use.admb = use.admb)
   if (substr(model, 1, 3) == "HMM" | (nchar(model) >= 4 & substr(model, 
                                                                  1, 4) == "MVMS")) 
     initial.list = set.initial(names(dml), dml, initial)
@@ -192,13 +206,20 @@ crm = function (data, ddl = NULL, begin.time = 1, model = "CJS", title = "",
                   debug = debug, accumulate = FALSE, chunk_size = chunk_size, 
                   refit = refit, control = control, itnmax = itnmax, 
                   scale = scale, ...)
-  if (model == "MSCJS") 
+  if (model == "MSCJS" & !csmhr) 
     runmodel = mscjs(data.proc, ddl, dml, parameters = parameters, 
                      initial = initial, method = method, hessian = hessian, 
                      debug = debug, accumulate = accumulate, chunk_size = chunk_size, 
                      refit = refit, control = control, itnmax = itnmax, 
                      scale = scale, re = re, compile = compile, extra.args = extra.args, 
                      clean = clean, ...)
+  if (model == "MSCJS" & csmhr) 
+    runmodel = mscjs_csmhr(data.proc, ddl, dml, parameters = parameters, 
+                           initial = initial, method = method, hessian = hessian, 
+                           debug = debug, accumulate = accumulate, chunk_size = chunk_size, 
+                           refit = refit, control = control, itnmax = itnmax, 
+                           scale = scale, re = re, compile = compile, extra.args = extra.args, 
+                           clean = clean, ...)
   if (model == "PROBITCJS") {
     if (is.null(initial)) {
       imat = process.ch(data.proc$data$ch, data.proc$data$freq, 
