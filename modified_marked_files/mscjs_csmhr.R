@@ -27,7 +27,7 @@ mscjs_csmhr = function (x, ddl, dml, model_data = NULL, parameters, accumulate =
   if (is.null(initial)) 
     par = list(Psi = rep(0, ncol(dml$Psi$fe)), p = rep(0, 
                                                        ncol(dml$p$fe)), S = rep(0, ncol(dml$S$fe)))
-  else par = set.initial(names(dml), dml, initial)$par
+  else par = marked:::set.initial(names(dml), dml, initial)$par
   model_data = list(S.dm = dml$S$fe, p.dm = dml$p$fe, Psi.dm = dml$Psi$fe, 
                     imat = imat, S.fixed = parameters$S$fixed, p.fixed = parameters$p$fixed, 
                     Psi.fixed = parameters$Psi$fixed, time.intervals = time.intervals)

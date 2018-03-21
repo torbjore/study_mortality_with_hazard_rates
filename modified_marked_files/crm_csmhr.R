@@ -166,7 +166,7 @@ crm_csmhr = function (data, ddl = NULL, begin.time = 1, model = "MSCJS", title =
                             chunk_size = chunk_size, simplify = simplify, use.admb = use.admb)
   if (substr(model, 1, 3) == "HMM" | (nchar(model) >= 4 & substr(model, 
                                                                  1, 4) == "MVMS")) 
-    initial.list = set.initial(names(dml), dml, initial)
+    initial.list = marked:::set.initial(names(dml), dml, initial)
   else initial.list = NULL
   if (!run) 
     return(list(model = model, data = data.proc, model.parameters = parameters, 
