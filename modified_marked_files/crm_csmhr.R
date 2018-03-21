@@ -5,7 +5,7 @@ crm_csmhr = function (data, ddl = NULL, begin.time = 1, model = "MSCJS", title =
                       refit = 1, itnmax = 5000, scale = NULL, run = TRUE, burnin = 100, 
                       iter = 1000, use.admb = FALSE, use.tmb = FALSE, crossed = NULL, 
                       reml = FALSE, compile = FALSE, extra.args = NULL, strata.labels = NULL, 
-                      clean = NULL, save.matrices = TRUE, simplify = FALSE, getreals = FALSE, 
+                      clean = FALSE, save.matrices = TRUE, simplify = FALSE, getreals = FALSE, 
                       check = FALSE, csmhr=TRUE, ...) 
 {
   model = toupper(model)
