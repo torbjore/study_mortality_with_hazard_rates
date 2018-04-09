@@ -12,11 +12,11 @@ These files accompany the paper «Study mortality with hazard rates, not probabi
 
 * The directory ‘modified_marked_files’ contains modified files from the ‘marked’ R package by Laake, Johnson & Conn (2013). Files are modified to enable modelling of cause-specific mortality hazard rates:
 
-** ‘multistate_csmhr.tpl’ (original ‘multistate.tpl’) is the modified model template file for ADMB (Fournier et al. 2012).
+-- ‘multistate_csmhr.tpl’ (original ‘multistate.tpl’) is the modified model template file for ADMB (Fournier et al. 2012).
 
-** ‘mscjs_csmhr.R’ (original mscjs.R) calls the executable generated from ‘multistate_csmhr.tpl’ by ADMB.
+-- ‘mscjs_csmhr.R’ (original mscjs.R) calls the executable generated from ‘multistate_csmhr.tpl’ by ADMB.
 
-** crm_csmhr.R (original crm.R) is the model fitting function (calling ‘mscjs_csmhr.R’) to be used.
+-- crm_csmhr.R (original crm.R) is the model fitting function (calling ‘mscjs_csmhr.R’) to be used.
 
 See Appendix S3 in the Supporting Information (the ‘supporting_information’ directory) for documentation and a worked example using simulated data.
 
