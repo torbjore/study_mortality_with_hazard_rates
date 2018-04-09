@@ -1,19 +1,21 @@
-// Modified version of multistate.tpl
-// Torbjorn Ergon March 2018
+// Modified version of multistate.tpl (see Original comments below) 
+// Torbjorn Ergon April 2018
 // Assumes that the first state is the 'alive' state and the last state is the 'dead' state. There may be any number (minimum 2) of 'newly dead by given cause' states in between.
-// PSI'S DO NOT HAVE TO BE FIXED (BUT YOU MAY FIX THE TIME-AVERAGED HAZARD RATE FOR ANY OF THE 'newly dead by given cause' states.)
+// Psi's do not have to be fixed for non-permissible transitions (but you may fix the time-averaged hazard rate for any of the 'newly dead by given cause' states.)
+// Original lines have been commented out, while new lines are marked with //*
 
 // ORIGINAL COMMENT: Fixed-effect Multi-State Cormack-Jolly-Seber model with unobservable states based on work of Jessica Ford in MEE Dec 2012
 // ORIGINAL COMMENT: Jeff Laake; 29 June 2016
 // ORIGINAL COMMENT: Modified from original version to split off code to compute dmat and gamma calculations
 // ORIGINAL COMMENT: Now allows fixed real parameters and uses simplification
+
 DATA_SECTION 
     init_int n;                            // number of capture histories
     init_int m;                            // number of capture occasions
-	init_int nS;                           // number of states excluding death state
+	  init_int nS;                           // number of states excluding death state
     init_imatrix ch(1,n,1,m);              // capture history matrix; uses numeric values for states
     init_ivector frst(1,n);                // occasion first seen for each history
-	init_vector freq(1,n);                 // frequency of each capture history
+	  init_vector freq(1,n);                 // frequency of each capture history
     init_matrix tint(1,n,1,m-1);           // time interval between occasions for each history-interval
     init_int kphi;                         // number of columns in the design matrix for Phi - survival
     init_int nrowphi;                      // number of rows in the simplified design matrix for Phi - survival
@@ -22,7 +24,7 @@ DATA_SECTION
     !! nrows=nS*(m-1);                
     !! all_nrows=n*nrows;                
                                              // last column in each design matrix is either -1 (estimated) or a fixed value
-//    init_matrix phidm(1,nrowphi,1,kphi);     // design matrix for Phi
+//    init_matrix phidm(1,nrowphi,1,kphi);   // design matrix for Phi
     init_vector phifix(1,nrowphi);           // phi fixed values
     init_ivector phiindex(1,all_nrows);      // phi indices
     
@@ -37,15 +39,15 @@ DATA_SECTION
 	!! nT=nS*nS*(m-1);                       
 	!! all_nT=n*nT;                       
 	init_int kpsi;                           // number of columns in Psi design matrix
-    init_int nrowpsi;                        // number of rows in the simplified design matrix for psi
-    init_matrix psidm(1,nrowpsi,1,kpsi);     // design matrix for psi
-    init_vector psifix(1,nrowpsi);           // psi fixed values
-    init_ivector psiindex(1,all_nT);         // psi indices
+    init_int nrowpsi;                      // number of rows in the simplified design matrix for psi
+    init_matrix psidm(1,nrowpsi,1,kpsi);   // design matrix for psi
+    init_vector psifix(1,nrowpsi);         // psi fixed values
+    init_ivector psiindex(1,all_nT);       // psi indices
 		
 PARAMETER_SECTION
-//    init_vector phibeta(1,kphi);       // parameter vector for Phi
+//    init_vector phibeta(1,kphi);     // parameter vector for Phi
     init_vector pbeta(1,kp);           // parameter vector for p
-    init_vector psibeta(1,kpsi);       // parameter vector for p
+    init_vector psibeta(1,kpsi);       // parameter vector for psi
 	objective_function_value g; 
 	
 PROCEDURE_SECTION
@@ -54,10 +56,10 @@ PROCEDURE_SECTION
     dvar_vector phi(1,nrows);          // temp vector for Phis for an individual
     dvar_vector uniquep(1,nrowp);      // all unique p values    
     dvar_vector p(1,nrows);            // temp vector for ps for an individual
-//    dvar_vector uniquepsi(1,nrowpsi);  // temp vector for psis 
-    dvar_vector haz(1,nrowpsi);        // mortality hazard rates 
+//    dvar_vector uniquepsi(1,nrowpsi);// temp vector for psis 
+    dvar_vector haz(1,nrowpsi);        //* mortality hazard rates 
 //    dvariable psisum;                  // sum of psi for each state to normalize with
-    dvariable hazsum;                  // sum of psi for each state to normalize with
+    dvariable hazsum;                  //* sum of psi for each state to normalize with
     dvar3_array psi(1,m-1,1,nS,1,nS);  // matrix for psis for each occasion 
 
     for(j=1;j<=nrowphi;j++)                           // compute all unique phi values
@@ -76,10 +78,10 @@ PROCEDURE_SECTION
     {
        if(psifix(j) < -0.5)
 //           uniquepsi(j)=exp(psidm(j)*psibeta);        // compute exp of psidm*psibeta; these are components of psi
-           haz(j) = exp(psidm(j)*psibeta);        // compute hazard rates as exp of psidm*psibeta
+           haz(j) = exp(psidm(j)*psibeta);        //* compute hazard rates as exp of psidm*psibeta
        else
 //           uniquepsi(j)=psifix(j);                    // fixed exp Psi value     
-           haz(j)=psifix(j);                    // fixed hazard rate value     
+           haz(j)=psifix(j);                    //* fixed hazard rate value     
     }  
           
     for(i=1;i<=n;i++)                              // loop over capture histories - one per capture history
@@ -94,31 +96,28 @@ PROCEDURE_SECTION
 	           p((j-1)*nS+k)=uniquep(pindex(bindex+(j-1)*nS+k));
              phi((j-1)*nS+k)= 1;  //pow(uniquephi(phiindex(bindex+(j-1)*nS+k)),tint(i,j));           
 //	           psisum=0;
-//	           hazsum=0;
 //	           for(k2=1;k2<=nS;k2++)              
 //		           psisum=psisum+uniquepsi(psiindex(bindex2+(k-1)*nS+k2));
-//		           hazsum = hazsum + haz(psiindex(bindex2+(k-1)*nS+k2));
 // 	           for(k2=1;k2<=nS;k2++)
 //	               psi(j,k,k2)=uniquepsi(psiindex(bindex2+(k-1)*nS+k2))/psisum;
 			     }
-			hazsum=0;
-			for(k2=2;k2<=(nS-1);k2++)
-			  hazsum = hazsum + haz(psiindex(bindex2+k2));
-			for(k2=2;k2<=(nS-1);k2++)
-				psi(j,1,k2) = (1-exp(-hazsum)) * haz(psiindex(bindex2+k2))/hazsum;    // Cause specific mortality probabilities
-			bindex2=bindex2+nS*nS;
-			psi(j,1,1) = exp(-hazsum);                                                         // Survival probability
-			psi(j,1,nS) = 0;
-			for(k=2;k<=nS;k++)                                                                 // Filling in the rest of the matrix
-			{
-				for(k2=1;k2<=(nS-1);k2++)
-					psi(j,k,k2) = 0;
-				psi(j,k,nS) = 1;
-			}
-        }
-         
-        ll_i(i,phi,p,psi);                 // compute neg log likelihod and increment
-     }
+			  hazsum=0;                                                            //*
+			  for(k2=2;k2<=(nS-1);k2++)                                            //*
+			    hazsum = hazsum + haz(psiindex(bindex2+k2));                       //*
+			  for(k2=2;k2<=(nS-1);k2++)                                            //*
+				  psi(j,1,k2) = (1-exp(-hazsum)) * haz(psiindex(bindex2+k2))/hazsum; //* Cause specific mortality probabilities
+			  bindex2=bindex2+nS*nS;                                               //*
+			  psi(j,1,1) = exp(-hazsum);                                           //* Survival probability
+			  psi(j,1,nS) = 0;                                                     //*
+			  for(k=2;k<=nS;k++)                                                   //* Filling in the rest of the matrix
+			  {                                                                    //*       
+				  for(k2=1;k2<=(nS-1);k2++)                                          //*
+					  psi(j,k,k2) = 0;                                                 //*
+				  psi(j,k,nS) = 1;                                                   //*
+			  }                                                                    //*
+      }                                                                  
+      ll_i(i,phi,p,psi);                 // compute neg log likelihod and increment
+    }
 
 FUNCTION dvar3_array get_dmat(const int i, const dvar_vector& p )
 	dvar3_array dmat(1,m-1,1,nS+1,1,nS+1); // observation probability matrices for individual i
