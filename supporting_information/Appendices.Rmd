@@ -2,58 +2,56 @@
 output:
   pdf_document:
     toc: yes
-    toc_depth: 3
+    toc_depth: 4
     number_sections: true
-#    fig_caption: true
-#    keep_tex: yes
-#  documentclass: 'article'
   html_document: default
 header-includes:
   \usepackage{float}
   \usepackage{amsmath}
   \DeclareMathOperator{\Var}{Var}
   \DeclareMathOperator{\VSS}{VSS}
-  
-title: "Supporting information for 'Study mortality with hazard rates, not probabilities'"
+  \DeclareMathOperator{\logit}{logit}
+  \DeclareMathOperator{\loglog}{loglog}
+title: "Supporting information for 'Study mortality with hazard rates, not probabilities'" 
 
-author: Torbj\o rn Ergon$^{a*}$, \O rnulf Borgan$^{b}$, Chloe Rebecca Nater$^{a}$
-  and Yngvild Vindenes$^{a}$
-date: "`r Sys.Date()`"
+author: \bigskip Torbj\o rn Ergon$^{a*}$, \O rnulf Borgan$^{b}$, Chloe Rebecca Nater$^{a}$ and Yngvild Vindenes$^{a}$
 
-abstract: This document provides additional information relating to each section and figure in the main article (<https://doi.org/10.1101/216739> (link will be updated upon acceptance in the journal)). The document is written in R Markdown. The Markdown source file (.Rmd) is available at [XXX]. It contains all R-code needed to reproduce all figures and examples in this document (see <https://rmarkdown.rstudio.com/>).
+date: \small $^{a}$Centre for Ecological and Evolutionary Synthesis, University of Oslo, P.O. Box 1066 Blindern, 0316 Oslo, Norway. \newline $^{b}$Department of Mathematics, University of Oslo, P.O. Box 1066 Blindern, 0316 Oslo, Norway. \newline $^{*}$Corresponding author, e-mail t.h.ergon@ibv.uio.no \newline "`r Sys.Date()`"
+
+abstract: This document provides additional information relating to each section and figure in the main article (<https://doi.org/10.1101/216739> (link will be updated upon acceptance in the journal)). The document is written in R Markdown. The Markdown source file (.Rmd) is available at <https://github.com/torbjore/study_mortality_with_hazard_rates>. It contains all R-code needed to reproduce all figures and examples in this document (see <https://rmarkdown.rstudio.com/>).
 ---
+
+\clearpage
 
 ```{r global_options, include=FALSE}
 knitr::opts_chunk$set(fig.pos = 'H')
+knitr::opts_chunk$set(eval = TRUE)
+# Set above to FALSE to avoid running R-code
 ```
-
-\bigskip
-
-$^{a}$Centre for Ecological and Evolutionary Synthesis, Department of Biosciences, University of Oslo, P.O. Box 1066 Blindern, N-0316 Oslo, Norway
-
-$^{b}$Department of Mathematics, University of Oslo, P.O. Box 1066 Blindern, N-0316 Oslo, Norway
-
-$^{*}$Corresponding author: e-mail: t.h.ergon@ibv.uio.no
+\renewcommand\thefootnote{\roman{footnote}} 
 
 \newpage
 \setcounter{section}{1}
 
 # Appendix S1: Details on sections and figures {-}
 
-The headings below are the same as in the article and contains explanations and R-code for the figures referred to under each heading.
+The headings below are the same as in the article. Each section contains explanations and R-code for the figures referred to under each heading.
 
 ## Introduction (Box 1)
 
-### Another derivation of the relationship between mortality hazard rates and survival probabilities
+### The relationship between mortality hazard rates and survival probabilities
 
-In Box 1 we explained the relationship between individual mortality hazard rates and survival probabilities (eq. (1) in the main text) by considering an individual point process for deadly events. We chose this approach to give an intuitive understanding of the hazard rate as an "intensity of deadly events" that individuals are exposed to and to set the stage for explaining the issue of competing risks in an intuitive manner in Appendix S2. Another way to derive this relationship is to consider a population of $N(t_1)$ identical individuals having identical expectations for their future environment at time $t_1$. If there is no reproduction, the instantaneous rate of change in population size, $N(t)$, will be
+In Box 1 we explained the relationship between individual mortality hazard rates and survival probabilities (eq. (1) in the main text) by considering an individual point process for deadly events. We chose this approach to give an intuitive understanding of the hazard rate as an "intensity of deadly events" that individuals are exposed to and to set the stage for explaining the issue of competing risks in an intuitive manner in Appendix S2. The following derivation follows the derivation in Quinn \& Deriso (1999, p. 10), referring to Ricker (1975), only that we here treat the mortality hazard rate as an individual trait and not a population level characteristic.
+
+$\qquad$ Consider a hypothetical population of $N(t_1)$ identical individuals having identical expectations for their future environment at time $t_1$. If there is no reproduction, the instantaneous rate of change in number of individuals, $N(t)$, will be
 $$\frac{\partial N(t)}{\partial t} = -hN(t)$$
-where $h$ is the mortality hazard rate in units of $t^{-1}$, here considered to be constant. Solving for $N(t_1+\Delta)$ as a function of $N(t_1)$ gives
+where $h$ is the mortality hazard rate in units of $t^{-1}$, here considered to be constant. Letting $\Delta$ represent a certain increment in time and solving for $N(t_1+\Delta)$ as a function of $N(t_1)$ gives
 $$N(t_1+\Delta) = N(t_1)e^{-h\Delta}$$
 To convert this to a survival probability over the interval, we divide by $N(t_1)$,
 $$S_{t_1 \rightarrow t_1+\Delta}=\frac{N(t_1+\Delta)}{N(t_1)}=e^{-h\Delta}$$
 If the mortality hazard rate is considered as a continuous function of time, $h(t)$, we can calculate the survival probability as a product of many infinitesimally small sections of the interval from time $t_1$ to $t_2$ to obtain eq. (1) in the main text,
 $$S_{t_1 \rightarrow t_2}= e^{-\int_{t_1}^{t_2}h(t)dt}.$$
+$\qquad$ For further relationships and derivations, see Collet (2014, chap. 1.3) and section \ref{Ecle} below.
 
 ## Logit-linear models of survival vs. log-linear models of mortality rates
 
@@ -68,15 +66,15 @@ where $\eta$ is a linear predictor of explanatory variables,
 $$\eta = \beta_{0} + \beta_{1}x_{1} + \beta_{2}x_{2} + ...$$
 This corresponds to using a loglog link-function on survival probabilities,
 $$S = \exp(-\bar{h}) = \exp(-\exp(\eta))$$
-The exponent of contrasts in the linear predictor (e.g. representing individuals with different body mass or sex) then become hazard ratios[^fn:alt_loglog],
+The exponent of contrasts in the linear predictor (e.g. representing different age groups or individuals with different body mass or sex) then becomes hazard ratios[^fn:alt_loglog],
 $$\exp(\eta_2 - \eta_1) = \frac{\exp(\eta_2)}{\exp(\eta_1)} = \frac{\bar{h}_2}{\bar{h}_1}.$$
 
-[^fn:alt_loglog]: Note that some computer programs, such as MARK, define the inverse loglog-link as $S = \exp(-\exp(-\eta))$, in which case the hazard ratio $\frac{\bar{h}_2}{\bar{h}_1}$ becomes $\exp(\eta_1 - \eta_2)$.
+[^fn:alt_loglog]: Note that some computer programs for analyses of capture-recapture data, such as MARK, define the inverse loglog-link as $S = \exp(-\exp(-\eta))$, in which case the hazard ratio $\frac{\bar{h}_2}{\bar{h}_1}$ becomes $\exp(\eta_1 - \eta_2)$.
 
-$\qquad$ One may chose to reparameterize the discrete-time model with e.g. monthly survival probabilities ($S_m$) instead of yearly survival probabilities ($S_y$). If one assumes that all months of the year have the same survival probability, this amounts to just replacing all $S_y$ in the model with $(S_m)^{12}$.[^fn:reparam] When using a loglog-link on survival probabilities, the model is invariant to such replacements because the time-averaged hazard rate remains unchanged. If this does not appear as obvious, one may see this better by first calculating the time-averaged hazard rate as $\bar{h}_y = \exp(\eta_y) = -\log(S_y)$. The unit for $\bar{h}_y$ is here year$^{-1}$. Similarly, the time-averaged hazard rate can also be calculated as $\bar{h}_m = \exp(\eta_m) = -\log(S_m)$, where $\bar{h}_m$ is expressed in units of month$^{-1}$. Since $S_y = (S_m)^{12}$, we see that $\bar{h}_y = -\log((S_m)^{12}) = -12\log(S_m) = 12\bar{h}_m$, and since an intensity of one event per month is the same as an intensity of 12 events per year, the two hazard rates $\bar{h}_y$ and $\bar{h}_m$ are identical (they just have different units of expression). Note also that the ratio of two hazard rates (i.e., hazard ratios) are invariant to which unit of expression is used for the hazard rates. Hence, when modelling survival probabilities through a loglog-link, all parameters in the linear predictor except the intercept are invariant to reparameterizations on the form $S_y = (S_m)^{12}$. This can be seen from expanding $\bar{h}_y = 12\bar{h}_m$,
+$\qquad$ One could reparameterize the discrete-time model with e.g. monthly survival probabilities ($S_m$) instead of yearly survival probabilities ($S_y$). If one assumes that all months of the year have the same survival probability, this amounts to just replacing all $S_y$ in the model with $(S_m)^{12}$.[^fn:reparam] When using a loglog-link on survival probabilities, the model is invariant to such replacements because the time-averaged hazard rate remains unchanged. If this does not appear as obvious, one may see this better by first calculating the time-averaged hazard rate as $\bar{h}_y = -\log(S_y)$. The unit for $\bar{h}_y$ is here year$^{-1}$. Similarly, the time-averaged hazard rate can also be calculated as $\bar{h}_m = -\log(S_m)$, where $\bar{h}_m$ is expressed in units of month$^{-1}$. Since $S_y = (S_m)^{12}$, we see that $\bar{h}_y = -\log((S_m)^{12}) = -12\log(S_m) = 12\bar{h}_m$, and since an intensity of one event per month is the same as an intensity of 12 events per year, the two hazard rates $\bar{h}_y$ and $\bar{h}_m$ are identical (they just have different units of expression). Note also that the ratio of two hazard rates (i.e., hazard ratios) are invariant to which unit of expression is used for the hazard rates. Hence, when modelling survival probabilities through a loglog-link, all parameters in the linear predictor except the intercept are invariant to reparameterizations on the form $S_y = (S_m)^{12}$. This can be seen from expanding $\bar{h}_y = 12\bar{h}_m$,
 $$\bar{h}_y = 12\bar{h}_m = 12\exp(\beta_0 + \beta_{1}x_{1} + \beta_{2}x_{2} + ...) = \exp((\log(12) + \beta_0) + \beta_{1}x_{1} + \beta_{2}x_{2} + ...) $$
 
-[^fn:reparam]: Note that this is a reparameterization since $S_y$ and $S_m$ have different meanings - it is not about "selecting a time-scale for the survival probabilities". Survival probabilities are unit-free absolute scale measurements that cannot be "re-scaled" in any way. Such reparameterizations of the general (full, unconstrained) model may be specified in e.g. MARK, and is commonly done when time between trapping occasions vary over the study period.
+[^fn:reparam]: Note that this is a reparameterization since $S_y$ and $S_m$ have different meanings - it is not about "selecting a time-scale for the survival probabilities". Survival probabilities are unit-free absolute scale measurements that cannot be "re-scaled" in any way. Such reparameterizations of the general (full, unconstrained) model may be specified in e.g. MARK, and is commonly done when time between capture occasions vary over the study period.
 
 $\qquad$ It is (unfortunately) common practice to model effects of covariates on survival probabilities through the use of a logit link-function. That is, survival probability is modelled as
 $$S=\frac{\exp(\eta)}{1+\exp(\eta)},$$
@@ -90,11 +88,13 @@ which is not easily simplified. Hence, replacing  $S_y$ with $(S_m)^{12}$ change
 $$S_y = (\exp(-\bar{h}_m))^{12} = \left( \exp(-\exp(\eta)) \right)^{12} = \exp(-12\exp(\eta)) = \exp(-\bar{h}_y),$$
 and, as also explained above, the functional relationships between the covariates and survival remains unchanged (only the intercept is changed to reflect the change in unit of expression for the time-averaged hazard rates).
 
+$\qquad$ In conclusion, when using the model $S = (\logit^{-1}(\beta_0 + \beta_1 x_1))^n$ where $n$ is the length of the survival interval in the chosen time-units, $n$ can be interpreted as a parameter that is fixed by the modeller (e.g., by setting the time-interval length in MARK). In contrast, the model $S = (\loglog^{-1}(\beta_0 + \beta_1 x_1))^n$ is equivalent to $S = (\loglog^{-1}(\beta_0' + \beta_1 x_1))$ where $\beta_0'=\log(n)+\beta_0$. Hence, when using a loglog-link, changing the time-scale just amounts to changing the definition of the intercept parameter but the model remains the same (i.e., it is a reparameterization).
+
 ### Figure 1
 Figure 1 in the main text illustrates the effect of replacing  $S_y$ with $(S_n)^n$ where $1/n$ is the length of the time-intervals used in the discrete model. To facilitate comparison of functional shapes, the intercepts and slopes of logit survival for all curves are defined such that yearly survival probability equals 0.05 when the covariate value is -2 and 0.95 when the covariate value is 2. If the models were fitted to data, the functional forms would be the same as in the figure, and predicted values would be in the same range, but the curves would not necessarily cross at the same place.
 
-#### Code - Figure 1:
-```{r, fig.height=5, fig.width=7, fig.cap="Functional shape of the relationship between yearly survival and a time-invariant covariate (e.g. individual specific)  when using the logit link-function on survival probability over different time interval lengths (solid coloured lines; see legend). When the logit-link is applied to monthly survival (red line), it is assumed that probability of survival is the same in all of the 12 months of the year, such that $S_{yearly}=S_{monthly}^{12}$. Similarly, when the logit-link is applied to survival over 12 years, $S_{yearly}=S_{12-yearly}^{1/12}$ (green line). To facilitate comparison of functional shapes, slope and intercept parameters are defined such that yearly survival probability is 0.05 at covariate value -2 and 0.95 at covariate value 2. The dashed line shows the loglog-linear relationship between yearly survival and the covariate, which is invariant to the interval length for the survival probability. When the logit-linear relationship applies to survival probabilities over short intervals, it approaches the loglog-linear functional form (see red line).", out.extra=''}
+#### Code - Figure 1
+```{r, fig.height=5, fig.width=7, fig.cap="See caption in the main text.", out.extra=''}
 # Defining functions
 logit = function(S) log(S/(1-S))
 invlogit = function(eta) exp(eta)/(1+exp(eta))
@@ -146,8 +146,8 @@ legend("topleft",
 ### Figure 2
 Odds-ratios are hard to interpret, not only because their meaning depend on the chosen interval length of the discrete-time model, but also because, for a given hazard ratio, they depend on the survival probability of the reference group. This is illustrated in Figure 2 in the main text.
 
-#### Code - Figure 2:
-```{r, fig.height=5, fig.width=7, fig.cap="SETTER INN DETTE TIL SLUTT", out.extra=''}
+#### Code - Figure 2
+```{r, fig.height=5, fig.width=7, fig.cap="See caption in the main text.", out.extra=''}
 # Function for computing odds-ratio for a given hazard ratio (hr) and survival
 # probability of reference group (s1)
 OR = function(s1, hr){
@@ -187,17 +187,21 @@ points(c(1,2), ORv(c(0.5, 0.5^2), HR), pch=4, cex=1.7)# Improved environment; od
 points(c(1,2), c(HR,HR), pch=4, cex=1.7)              # Improved environment; hazard ratio
 ```
 
-From Fig. 2, it may be noted that odds-ratios approach the inverse of the hazard ratio ($1/0.5 = 2$) when survival probabilities are high; i.e., when the survival probability of the reference is high (pink line) or when interval lengths are short (to the left in the plot).
+From Fig. 2, it may be noted that odds-ratios approach the inverse of the hazard ratio ($1/0.5 = 2$) when survival probabilities are high; i.e., when the survival probability of the reference is high (magenta line) or when interval lengths are short (to the left in the plot).
 
 ## Multiple sources of mortality and competing risks 
 
-Mortality hazard rates are more elucidating with respect to the underlying mechanisms than mortality probabilities when studying associations between two or more sources of mortality in a population because mortality probabilities are intrinsically dependent; increasing the hazard rate for one cause of mortality will automatically reduce the probabilities of dying from all other causes (Appendix S2). Figure 3 in the main text shows how this negative intrinsic dependency can dominate empirical correlations between cause specific mortality probabilities across years even when correlations between the cause specific mortality hazard rates are strongly positive. Figure 4 illustrates the relationships between cause-specific mortality hazard rates and survival probabilities in a age-dependent model.
+Mortality hazard rates are more elucidating with respect to the underlying mechanisms than mortality probabilities when studying associations between two or more sources of mortality in a population because mortality probabilities are intrinsically dependent; increasing the hazard rate for one cause of mortality will automatically reduce the probabilities of dying from all other causes (Appendix S2). Figure 3 in the main text shows how this negative intrinsic dependency can dominate empirical correlations between cause specific mortality probabilities across years even when correlations between the cause specific mortality hazard rates are strongly positive.
+
+$\qquad$ Figure 4 illustrates the relationships between cause-specific mortality hazard rates and survival probabilities in a age-dependent model. We note here that, in empirical studies of senescence, one should also consider potential biases arising from un-modelled individual heterogeneity (i.e., “frailty”[^fn:frailty]) (Vaupel, Manten & Stallard 1979; Cam et al. 2002; Collett 2014), temporary emigration (Langtimm 2009) and age-dependent dispersal (Ergon & Gardner 2014).
+
+[^fn:frailty]: Unobserved individual heterogeneity in mortality hazard rates. In the presence of frailty, the population will be increasingly dominated by individuals with low mortality hazard rates at higher age-classes. Hence, age-related patterns in population level mortality rates are not representative of individual level patterns.
 
 ### Figure 3
 Figure 3 is produced by simulation. First, $10^5$ values of log hazard rates, $\log(h_1)$ and  $\log(h_2)$, were drawn from a bi-variate normal distribution with means given by the the colour legend (median($h$) = exp(mean(log($h$)))), standard deviations given above each panel, and correlations given by the x-axis. Cause-specific mortality probabilities where then computed from each of the $10^5$ samples, and the Pearson correlation coefficients between them where then computed and plotted on the y-axis.
 
-#### Code - Figure 3:
-```{r, fig.height=4, fig.width=7, fig.cap="SETTER INN DETTE TIL SLUTT", out.extra=''}
+#### Code - Figure 3
+```{r, fig.height=4, fig.width=7, fig.cap="See caption in the main text.", out.extra=''}
 library(MASS) # for 'mvrnorm'
 
 # Functions
@@ -250,7 +254,7 @@ title(expression(SD(log~italic(h)) == 0.01))
 Figure 4 illustrates the fact that, if one of two cause specific mortality *probabilities* is constant (red line in panel a) while the other increases with age, both cause specific mortality *hazard rates* must increase with age (panel b).
 
 #### Code - Figure 4
-```{r, fig.height=5, fig.width=8, fig.cap="SETTER INN DETTE FRA MANUS TIL SLUTT", out.extra=''}
+```{r, fig.height=5, fig.width=8, fig.cap="See caption in the main text.", out.extra=''}
 # Parameters chosen to resemble Fig. 4 in Koons et al. 2014
 x = 1:17 # Age (x-axis values)
 c = 12 # Age at 50% survival
@@ -288,9 +292,11 @@ legend("topleft", legend=c("Human-related", "Natural"), col=c("red","blue"),
 title("(b)", adj=0)
 ```
 
-## Analyses of elasticity of population growth rate to survival probabilities versus mortality hazard rates
+## Elasticity analyses based on mortality hazard rates instead of survival probabilities
 
 ### Relationships
+
+#### Elasticity to $S$ and $\bar{h}$
 
 In the main text, the relationship between elasticity of population growth rate $\lambda$ to survival probability $S$ over an interval, $\epsilon_{S}$, and elasticity to time-averaged mortality hazard rate $\bar{h}$ during the same interval, $\epsilon_{\bar{h}}$, is given as
 $$\epsilon_{\bar{h}}=-\bar{h}\epsilon_{S}$$
@@ -300,18 +306,22 @@ $$\epsilon_{\bar{h}}
 = \frac{\partial \log(\lambda)}{\partial \log(S)} \frac{\partial \log(S)}{\partial \log(\bar{h})}
 = \epsilon_{S}\frac{\partial (-\bar{h})}{\partial \log(\bar{h})}
 = \epsilon_{S}(-\bar{h})
-= \epsilon_{S} \log(S).
-$$
-$\qquad$ If the above survival probability applies to one year, $S_y$, one may chose to reparameterize the model with monthly survival probabilities, $S_m$, assuming that all months of the year have the same survival probability such that $S_y = S_m^{12}$ and $\log(S_y) = 12\log(S_m)$. The relationship between the elasticities of these two survival probabilities is
+= \epsilon_{S} \log(S).$$
+
+#### Dependencies on interval length
+
+If the above survival probability applies to one year, $S_y$, one may choose to reparameterize the model with monthly survival probabilities, $S_m$, assuming that all months of the year have the same survival probability such that $S_y = S_m^{12}$ and $\log(S_y) = 12\log(S_m)$. The relationship between the elasticities of these two survival probabilities is
 $$
 \epsilon_{S_m}
 = \frac{\partial \log(\lambda)}{\partial \log(S_m)}
 = \frac{\partial \log(\lambda)}{\partial \log(S_y)} \frac{\partial \log(S_y)}{\partial \log(S_m)}
-= \epsilon_{S_y} 12
+= 12\epsilon_{S_y}
 $$
 $\qquad$ Elasticities to instantaneous mortality hazard rates, or their time-averaged values ($\bar{h}=-\log(S)$), are invariant to any such reparameterizations with respect to the choice of interval length of the discrete model. If this is not intuitive, consider the relationship $\epsilon_{\bar{h}} = \epsilon_{S_y} \log(S_y) = \frac{1}{12} \epsilon_{S_m}12\log(S_m) = \epsilon_{S_m} \log(S_m)$.
 
-$\qquad$ As pointed out by Link \& Doherty (2002), the relationship between elasticity to mortality probability, $\epsilon_P$, and elasticity to survival probability, $\epsilon_S$, is
+#### Elasticity to mortality probability
+
+As pointed out by Link \& Doherty (2002), the relationship between elasticity to mortality probability, $\epsilon_P$, and elasticity to survival probability, $\epsilon_S$, is
 $$
 \epsilon_P
 = \frac{\partial \log(\lambda)}{\partial \log(1-S)}
@@ -319,7 +329,31 @@ $$
 = \epsilon_S \frac{\partial S}{\partial (1-S)} \frac{1-S}{S}
 = -\epsilon_S \left( \frac{1-S}{S} \right).
 $$
-That is, a given relative decrease in morality probability only has the same impact on population growth rate (or fitness) as the same relative increase in survival probability when $S=0.5$. Moving away for $S=0.5$ in either direction, these two elasticities will be increasingly different. It seems hard to justify why any of these elasticities should be more relevant than the other (Link \& Doherty 2002); they represent very different degrees of change in the mortality process when $S$ is not close to $0.5$. Elasticity to mortality hazard rate, on the other hand, has a clear and meaningful interpretation; it is the relative change in population growth rate caused by a relative increase in the intensity at which individuals die (Box 1 in the main text).
+That is, a given relative decrease in morality probability only has the same impact on population growth rate (or fitness) as the same relative increase in survival probability when $S=0.5$. Moving away from $S=0.5$ in either direction, these two elasticities will be increasingly different. It seems hard to justify why any of these elasticities should be more relevant than the other (Link \& Doherty 2002); they represent very different degrees of change in the mortality process when $S$ is not close to $0.5$. Elasticity to mortality hazard rate, on the other hand, has a clear and meaningful interpretation; it is the relative change in population growth rate caused by a relative increase in the intensity at which individuals die (Box 1 in the main text).
+
+#### Elasticity to “current life-expectancy” \label{Ecle}
+ 
+The relationship between the mortality hazard rate $h(t)$ and the probability density for death at time $t$, $f(t)$, is given as
+$$h(t) = \frac{f(t)}{1-\int_0^t f(\tau)d\tau}.$$
+(Collet 2014, chap. 1.3). The probability density function $f(t)$ is here conditional on being alive at $t=0$ (defined as time of birth or the beginning of a given interval) and integrates to $1$ over infinite time. The hazard rate function must always be greater than or equal to zero and must integrate to infinity over infinite time. It is also useful to note that the denominator in the above expression is the probability of being alive at time $t$, $S(t) = 1-\int_0^t f(\tau)d\tau$. Further, the numerator of the expression is the negative derivative of this survival function. Hence, the hazard rate function can also be expressed as
+$$h(t) = -\frac{\partial S(t)}{\partial t} \frac{1}{S(t)} = -\frac{\partial \log(S(t))}{\partial t}$$
+(Collet 2014, chap. 1.3).
+
+$\qquad$ Hence, for any given probability distribution for time of death $f(t)$, there is a corresponding hazard rate function $h(t)$, and vice versa. The probability distribution for time of death corresponding to a constant hazard rate $h(t)=h$ is the exponential distribution with mean $\int_0^\infty t f(t) dt = 1/h$. Hence, if an individual (hypothetically) maintains its current mortality hazard rate throughout life, its expected time until death (i.e., its "current life-expectancy") is $1/h$. The elasticity of $\lambda$ to current life-expectancy is then
+$$\frac{\partial \log(\lambda)}{\partial \log(1/h)} = -\frac{\partial \log(\lambda)}{\partial \log(h)} =-\epsilon_h$$
+
+#### Perspectives on hazard rates and models of stage-duration distributions \label{perspectives}
+
+The notion of elasticity to life-expectancy introduced in section \ref{Ecle} above is similar to the notion of elasticity to stage-duration in the absence of mortality (de Valpine et al. 2014). Structured population models based on stage-duration distributions (de Valpine et al. 2014) may be specified by either specifying the stage-duration distribution itself, $f(t)$, or by specifying the corresponding hazard function $h(t)$ (see relationships in section \ref{Ecle}). If individuals can leave a certain state to $K>1$ other state ('death' being one of them), the unconditional state-duration distribution is the probability distribution corresponding to the total hazard rate $h_{tot} (t) = \sum_{k=1}^K h_k(t)$, where $h_k(t)$ are the transition specific hazard rates. It is, however, often of greater interest to study the probability distributions for age or time of state-transition conditional on survival. For example, Ergon et al. (2009) estimated the latent distributions[^fn:latent_distribution] for seasonal timing of onset of reproduction in populations of overwintering field voles.
+
+[^fn:latent_distribution]: By 'latent distributions' we here mean the distribution of the life-history trait that is independent of mortality, and this distribution represent the trait that is under selection. In contrast, the 'realized distribution' is the distribution of time/age of maturation among those individuals that survive until maturation. Because individuals that have a late latent maturation need to survive over a longer period before maturation can be observed, these individuals will be under-represented in the realized distribution (unless individual time/age of maturation is strongly negatively correlated with mortality hazard rate).
+
+$\qquad$ Matrix population models are memory-less (Markovian) in the sense that state transition probabilities only depend on the current state of the individual. However, in individual-based "i-state configuration models" (Caswell \& John 1992) one can track individual time since entering specific states, and hazard rates may in addition be dependent on "global time" and age of each individual. Such models could potentially be used to compute full conditional likelihoods (Carlin \& Louis 2009), and modell fitting of capture-recapture data could be done by using Bayesian MCMC sampling. Potential applications could include estimation of (mortality) cost or reproduction depending on time since conception (or maturation), or mortality rates depending on time since infection of a pathogen.
+
+$\qquad$ Whenever individuals can transition from one state to more than one other state (including mortality), there is a competing risk situation among the potential transitions (Appendix S2). In addition, individuals may transition from one state to another state (or back to the original state) via other states during a given time period. A general, and very useful, tool to compute transition probability matrices from transition hazards between any number of states, involve the use of matrices of transition hazards and matrix exponentials (Keyfitz \& Caswell 2005 chap. 17.5; Miller \& Andersen 2008; Conn et al. 2012): First, a matrix $\mathbf{A}$ is constructed with transition hazards as the off-diagonal elements, and the negative sum of all transition hazards out of the given state as the diagonal elements, such that each row in $\mathbf{A}$ sums to zero. The corresponding transition probability matrix for an interval of length $\Delta$ is then simply
+$$\mathbf{P} = \exp(\mathbf{A}\Delta).$$
+`exp` refers here to a matrix exponential; function ‘expm’ in the ‘expm’ package of R (Goulet et al. 2017) and function ‘MatrixExponential’ in the LinearAlgebra package in Maple\textsuperscript{TM}. See Miller \& Andersen (2008) and Conn et al. (2012) for various examples. To include continuous hazard functions of time, or time since entering the states (as discussed above), one may discretize by computing transition probability matrices over many short time-intervals (e.g. days), assuming constant hazard rates within each interval.
+
 
 ### Figures 5 and 6
 
@@ -382,10 +416,10 @@ $$
 \frac{\epsilon_{\bar{h}_a}}{\epsilon_{\bar{h}_j}}
 = \frac{\bar{h}_a}{\bar{h}_j} \frac{S_a}{mS_j}
 $$
-$\qquad$ Figure 5 in the main text shows the effect of reparameterizing the model with survival probabilities representing different interval lengths, and Figure 6 compares elasticity ratios with respect to survival probabilities and time-averaged mortality hazard rates. Although these figures could have been produced simply by using the relationships derived for the two-stage model above, we have chosen to do it in a more general way using the 'vitalsens' function in the 'popbio' R-package (Stubben \& Milligan 2007). Hence, the code below can quite easily be adapted to any matrix population model or other kinds or reparameterizations.
+$\qquad$ Figure 5 in the main text shows the effect of reparameterizing the model with survival probabilities representing different interval lengths, and Figure 6 compares elasticity ratios with respect to survival probabilities and time-averaged mortality hazard rates. Although these figures could have been produced simply by using the relationships derived for the two-stage model above, we have chosen to do it in a more general way using the 'vitalsens' function in the 'popbio' R-package (Stubben \& Milligan 2007). Hence, the code below can quite easily be adapted to any matrix population model or to other kinds or reparameterizations.
 
 #### Code - Figure 5
-```{r, fig.height=6, fig.width=9, fig.cap="SETTER INN DETTE FRA MANUS TIL SLUTT", out.extra=''}
+```{r, fig.height=6, fig.width=9, fig.cap="See caption in the main text.", out.extra=''}
 library(popbio) # For function 'vitalsens'
 
 # Function for elastisities with reparameterization of survival probabilities 
@@ -410,7 +444,7 @@ ela_S = function(
 # Above function allowing vector inputs for t
 Ela_S = Vectorize(ela_S, "t")
 
-# Using same structure to also reparameterizing survival probabilities with respect to
+# Using same structure to also reparameterize survival probabilities with respect to
 # time averaged hazard rates
 # This can be substantially simplified, but keeping the general structure as an example
 # and for validation
@@ -500,9 +534,10 @@ filled.contour(Sj, Sa, log(Er.S), levels=bins, nlevels=18, col=Col,
         key.title = title(main = "ln(ratio)", cex.main=0.9, line=1))
 title("(a)", outer=T, adj=0.05, line=-2)
 ```
+
 \setcounter{figure}{5} 
 
-```{r, fig.height=6, fig.width=9, fig.cap="SETTER INN DETTE FRA MANUS TIL SLUTT", out.extra=''}
+```{r, fig.height=6, fig.width=9, fig.cap="See caption in the main text.", out.extra=''}
 filled.contour(Sj, Sa, log(Er.h), levels=bins, nlevels=18, col=Col,
         plot.axes={axis(1); axis(2); text(c(0.2, 0.6), c(0.6, 0.2), c("a","b"), cex=1.3)},
         plot.title = title("Elasticity ratio -  - mortality rate", cex.main=1.1,
@@ -510,12 +545,13 @@ filled.contour(Sj, Sa, log(Er.h), levels=bins, nlevels=18, col=Col,
         key.title = title(main = "ln(ratio)", cex.main=0.9, line=1))
 title("(b)", outer=T, adj=0.05, line=-2)
 ```
+
 ### Figure 7
 
-As shown in Figure 6 above, patterns in elasticities to mortality hazard rate are very different from patterns in elasticities to survival probability. One way to understand this is to note, as shown in Figure 7, that the relationship between $\log(S)$ and $\log(h)$ is very non-linear ($\log(S) = -\exp(\log(h))$ (the first derivative in this plot is -h). When the hazard rate is low (survival is high), a large relative change in the hazard rate (to the left in the figure) corresponds to a small relative change in survival probability. When the hazard rate is high (survival is low), a small relative change in the hazard rate corresponds to a large relative change in survival. This is also reflected in the relationship between elasticities to survival probability and elasticity to mortality hazard rate given above; $\epsilon_{\bar{h}} = -h\epsilon_S$.
+As shown in Figure 6 above, patterns in elasticities to mortality hazard rate are very different from patterns in elasticities to survival probability. One way to understand this is to note, as shown in Figure 7, that the relationship between $\log(S)$ and $\log(h)$ is very non-linear ($\log(S) = -\exp(\log(h))$ (the first derivative in this plot is $-h$). When the hazard rate is low (survival is high), a large relative change in the hazard rate (to the left in the figure) corresponds to a small relative change in survival probability. When the hazard rate is high (survival is low), a small relative change in the hazard rate corresponds to a large relative change in survival. This is also reflected in the relationship between elasticities to survival probability and elasticity to mortality hazard rate given above; $\epsilon_{\bar{h}} = -h\epsilon_S$.
 
 #### Code - Figure 7
-```{r, fig.height=6, fig.width=7, fig.cap="SETTER INN DETTE FRA MANUS TIL SLUTT", out.extra=''}
+```{r, fig.height=6, fig.width=7, fig.cap="See caption in the main text.", out.extra=''}
 S = seq(0.001, 0.999, length.out=40)
 y = log(S)
 x = log(-log(S))
@@ -570,23 +606,19 @@ $$
 = \frac{\partial \log(\lambda)}{\partial \log(\bar{h})}
 = \epsilon_{\bar{h}}
 $$
-That is, using the loglog-link to obtain a variance-stabilized sensitivity to survival probability, assuming that the temporal variance in interval specific survival probabilities is proportional to $\left( \mu\log(\mu) \right)^2$, is equivalent to using the elasticity to time-averaged mortality hazard rate.
-
-
-
-
+Hence, using the loglog-link to obtain a variance-stabilized sensitivity to survival probability, assuming that the temporal variance in interval specific survival probabilities is proportional to $\left( \mu\log(\mu) \right)^2$, is equivalent to using the elasticity to time-averaged mortality hazard rate.
 
 \newpage
 \setcounter{section}{2}
 \setcounter{subsection}{0}
 
-# Appendix S2: Compteting risks and cause-specific mortality probabilities {-}
+# Appendix S2: Competing risks and cause-specific mortality probabilities {-}
 
 \renewcommand\thefigure{S\thesection.\arabic{figure}}    
 \setcounter{figure}{0} 
 
 
-```{r, echo=FALSE, fig.height=4, fig.width=10, fig.cap="SETTER INN DETTE FRA MANUS TIL SLUTT", out.extra=''}
+```{r, echo=FALSE, fig.height=4, fig.width=10, fig.cap="Realized times of two types of independent recurrent events (or “deadly events experienced by an immortal individual”)", out.extra=''}
 set.seed(1)
 
 
@@ -601,23 +633,25 @@ title(xlab="Time", line=-.2)
 axis(1, at = red.events, labels=F, col.ticks="red", tcl=1, pos=0, lwd.ticks=2)
 axis(1, at = blue.events, labels=F, col.ticks="blue", tcl=1.3, pos=0, lwd.ticks=3)
 
-````
+```
 
-Figure X illustrates a situation where another (“blue”) cause of mortality has been added to the “red” cause of mortality illustrated in the figure in Box 1 in the main text. If we, for simplicity, assume that the hazard rates for these two causes of mortality are constant over an interval with values $h_1$ and $h_2$, the total mortality hazard rate is now $h_1+h_2$, and the probability of surviving the interval of length $\Delta t$ is $S=e^{-(h_1+h_2 )\Delta t}$.
+Figure S2.1 illustrates a situation where another (“blue”) cause of mortality has been added to the “red” cause of mortality illustrated in the figure in Box 1 in the main text. If we, for simplicity, assume that the hazard rates for these two causes of mortality are constant over an interval with values $h_1$ and $h_2$, the total mortality hazard rate is now $h_1+h_2$, and the probability of surviving the interval of length $\Delta$ is $S=e^{-(h_1+h_2 )\Delta}$.
 
 $\qquad$ It is essential to realize that adding the blue cause of mortality in this example reduces the probability of dying from the red cause, even though the hazard rate representing the red cause remains the same. This is due to the fact that the individual now may die from a blue cause before a red event takes place. The probability of dying from a specific cause (often referred to as a "risk"), when the hazard rate of this cause remains unchanged, will always go down when the hazard rate of other mortality causes increase (or go up if the hazard rate of other causes decrease). One may say that the risks of death are "competing", and the probability of “winning” depends on the strength of the competitors (i.e., mortality probabilities are intrinsically linked). Hence, a change in the probability of dying of a specific cause may be due to changes in any of the cause specific mortality hazard rates. When studying e.g., environmental influence on different causes of mortality, or how different causes of mortality vary and co-vary among groups of individuals or among years within a population, it is therefore of prime interest to estimate the hazard rates of different causes of mortality rather than the probabilities of dying from different causes.
 
-$\qquad$ Discrete-time models (such as classical capture recapture models) that incorporate different causes of mortality involve state-transition probability parameters representing the probabilities that an individual that is alive at one time-point ($t_1$) is either alive or dead from specific causes at a later point in time ($t_2$). These transition probabilities should sum to 1. Hence, $S + \sum_{k=1}^{K}{P_k} = 1$, where $S$ is the survival probability and the $P_k$'s are the probabilities of dying from different causes classified in $K$ categories. Assuming, for simplicity, that each of the cause specific hazard rates, $h_k$ are constant within intervals, we know from above that $S=e^{-\sum_{k=1}^{K}h_k\Delta t}$. To find the probability of dying from cause $k$, $P_k$, we may use the definition of hazard rates as
+$\qquad$ Discrete-time models (such as classical capture recapture models) that incorporate different causes of mortality involve state-transition probability parameters representing the probabilities that an individual that is alive at one time-point ($t_1$) is either alive or dead from specific causes at a later point in time ($t_2$). These transition probabilities should sum to 1. Hence, $S + \sum_{k=1}^{K}{P_k} = 1$, where $S$ is the survival probability and the $P_k$'s are the probabilities of dying from different causes classified in $K$ categories. Assuming, for simplicity, that each of the cause specific hazard rates, $h_k$ are constant within intervals, we know from above that $S=e^{-\sum_{k=1}^{K}h_k\Delta}$. To find the probability of dying from cause $k$, $P_k$, we may use the definition of hazard rates as
 $$h(t) = \lim_{dt \rightarrow 0} \Pr(t  \leqslant T < t+dt|t<T)/dt$$
 (Collett 2014) where $T$ is time of death and $dt$ is an infinitesimally small unit of time (i.e., $h(t)dt$ is the probability that the individual will die before time $t+dt$ given that it is alive at time $t$). From this we see that the relationship between the hazard rate and the probability density for time of death at time $t$, $f(t)$, is
 $$h(t) = \frac{f(t)}{S(t)}$$ 		
 where $S(t)$ is the probability of being alive at time $t$, which equals $1-\int_0^t f(t)dt$. Using this relationship, we can now find the probability density function for the time of death from cause $k$, $f_k(\tau)$, where $\tau=t-t_1$ is the time since the beginning of the interval,
 $$f_k(\tau)=h_k e^{-\tau\sum_{l=0}^K h_l}$$
-Note that this density function is not a proper probability distributions function as it does not integrate to 1 over infinite time. Instead, it integrates to the probability of ever dying from cause $k$, which in the case of constant hazard rates becomes $h_k/\sum_{l=1}^K h_l$. To find the probability of dying from cause $k$ before the end of the interval, we need to integrate $f_k (\tau)$ from $\tau=0$ to $\tau = \Delta t$ ($=t_2-t_1$), and get
-$$P_k = \int_0^{\Delta t} f_k(\tau)d\tau = \left({ 1-e^{-\Delta t \sum_{l=1}^K h_l} }\right) \frac{h_k}{\sum_{l=1}^K h_l} = \left({ 1-S }\right) \frac{h_k}{\sum_{l=1}^K h_l}$$
+Note that this density function is not a proper probability distributions function as it does not integrate to 1 over infinite time. Instead, it integrates to the probability of ever dying from cause $k$, which in the case of constant hazard rates becomes $h_k/\sum_{l=1}^K h_l$. To find the probability of dying from cause $k$ before the end of the interval, we need to integrate $f_k (\tau)$ from $\tau=0$ to $\tau = \Delta$ ($=t_2-t_1$), and get
+$$P_k = \int_0^{\Delta} f_k(\tau)d\tau = \left({ 1-e^{-\Delta \sum_{l=1}^K h_l} }\right) \frac{h_k}{\sum_{l=1}^K h_l} = \left({ 1-S }\right) \frac{h_k}{\sum_{l=1}^K h_l}$$
 This expression can be generalized to cases where cause specific hazard rates may vary over time but remain proportional throughout the interval such that $\alpha_k=h_k(t)/\sum_{l=1}^K h_l(t)$, in which case we get
 $$P_k=(1-S)\alpha_k$$
 $\qquad$ Note that the conditional probability of having died from cause $k$, given that the individual has died, in the case of proportional hazard rates is the fraction of the total mortality hazard rate attributed to the specific cause, $\alpha_k$, which in this case equals the probability of ever dying of this cause. This is, however, not the case when hazard rates are not proportional over time.
+
+$\qquad$ Section \ref{perspectives} in Appendix S1 outlines a more general approach to deriving/computing transition probabilities under competing risk.
 
 \newpage
 \setcounter{section}{3}
@@ -635,32 +669,350 @@ where $\eta_k$ is the linear predictor relating to cause $k$. This multinomial l
 $$S=\exp \left( -\sum_{k=1}^K \exp(\eta_k) \right)$$
 and
 $$P_k = \left({ 1-S }\right) \frac{\exp(\eta_k)}{\sum_{l=1}^K \exp(\eta_l)}$$
-$\qquad$ To facilitate model fitting using the above multinomial link-function, we modified the functions used for fitting multi-state capture-recapture models in the R-package ‘marked’ package (Laake, Johnson \& Conn 2013). This package combines a system for highly flexible model formulations (including modelling of covariate effects relating to time, age, cohort and individuals), similar to the popular 'RMarked' package, with highly efficient numerical optimization using automatic differentiation by executables compiled by the ADMB software (Fournier et al. 2012). The files are available on [Github], and a worked example using simulated data is included below.
+$\qquad$ To fit, for example, a model with two causes of mortality one needs a 4 by 4 transition matrix
+$$
+\mathbf{\Psi} =
+\left[
+\begin{array}{cccc}
+S & P_1 & P_2 & 0\\
+0 & 0 & 0 & 1\\
+0 & 0 & 0 & 1\\
+0 & 0 & 0 & 1
+\end{array}
+\right]
+$$
+The four states are here 'alive', 'newly dead from cause 1', 'newly dead from cause 2' and a final absorbing state (rows represent "from-state" and columns represent "to-state"). The distinction between newly dead states and the final state is necessary because individuals must be reported dead in the year they died (i.e., year of death of recovered individuals must be known). Recapture/recovery probabilities of the four states are 
+$$
+\mathbf{p} =
+\left[
+\begin{array}{cccc}
+p_0 & p_1 & p_2 & 0
+\end{array}
+\right]
+$$
+In the most general (full, unconstrained) model, parameters would be individual and year specific, but indices are omitted here for simplicity. Survival probabilities in the general multi-state capture-recapture models must be fixed to 1 for the three first states and to 0 (or any probability value) for the absorbing state.
 
-## Example R-code
+$\qquad$ To facilitate modelling of mortality hazard rates, we modified the functions used for fitting multi-state capture-recapture models in the R-package ‘marked’ package (Laake, Johnson \& Conn 2013). This package combines a system for highly flexible model formulations (including modelling of covariate effects relating to time, age, cohort and individuals), similar to the popular 'RMark' package, with highly efficient numerical optimization of the likelihood function using automatic differentiation through executables compiled by the ADMB software (Fournier et al. 2012). The files are available on <https://github.com/torbjore/study_mortality_with_hazard_rates>, and a worked example using simulated data is included below.
 
-[I'm working on getting the files on Github and will include an example]
+$\qquad$ Schaub \& Pradel (2004) and Schaub (2009) noted that only some sub-models of another version of the general multi-state capture-recapture model (see Table 1 in the main text) are identifiable. This is also the case for our model, but a detailed treatment of identifiability is beyond our scope here.
+
+## Preparation
+
+To use the modified 'marked' files, an executable must first be compiled and saved on your computer. To do this, first install the ADMB software from <http://www.admb-project.org/>. ADMB needs a C++ compiler, but this is included in some of the ADMB installation files. It is safest to install ADMB in a directory without spaces in its name and path. The code below assumes that ADMB is installed in "C:/admb", but this can be modified. Once ADMB and a C++ compiler is installed, the following code will create a 'multistate_csmhr.exe' file in your working directory (use install.packages() to install any missing packages).
+
+\bigskip
+
+```{r, message=FALSE, results='hide'}
+library(marked)
+library(R2admb)
+library(RCurl) # For getURL
+
+prepare_admb = function()
+{
+  Sys.setenv(PATH = paste("c:/admb/bin;c:admb/utilities;c:/admb/utilities/mingw64/bin;", 
+                          Sys.getenv("PATH"), sep = ";"))
+  Sys.setenv(ADMB_HOME = "c:/admb")
+  invisible()
+}
+prepare_admb()
+
+# Downloading the ADMB tpl file and building a local executable
+# Breaking up string to fit in box
+reprstr1 = "https://raw.githubusercontent.com/torbjore/study_mortality_with_hazard_rates/"
+reprstr2 = "master/modified_marked_files/"
+tplfile = paste(reprstr1, reprstr2, "multistate_csmhr.tpl", sep="")
+tpl = getURL(tplfile)
+write(tpl, "multistate_csmhr.tpl")
+marked::setup_admb("multistate_csmhr", compile=TRUE, clean=FALSE)
+```
+
+## Example
+
+In this simple example we will simulate 10 years of capture-recapture data with two causes of mortality; 'hunting' and 'natural'. We will assume that both mortality hazard rates varies independently over time, that probability of recapture of an individual alive is $0.5$, that the reporting probability of a hunted individual is $0.7$, and that the probability that an individual which died of other (natural) causes will be found and reported is $0.1$.
+
+$\qquad$ First, we simulate data:
+```{r}
+set.seed(11) # for reproducibility
+
+p = c(0.5, 0.7, 0.1, 0) 
+N.ind = 200 # Number of individuals marked each year
+N.yr = 10   # Number of years
+
+# Year-specific hazard rates for the two causes
+h1 = runif(N.yr-1, 1/25, 1/2)
+h2 = runif(N.yr-1, 1/25, 1/2)
+
+# For computation of transition matrix
+fTM = function(h1, h2){
+  # Yearly survival probability
+  S = exp(-(h1+h2)) 
+  # Yearly mortality probabilities
+  P1 = (1-S)*h1/(h1+h2)
+  P2 = (1-S)*h2/(h1+h2)
+  # Transition matrix
+  tm = matrix(
+    c(
+      S, P1, P2, 0,
+      0, 0, 0, 1,
+      0, 0, 0, 1,
+      0, 0, 0, 1
+    ), 4, 4, byrow = T
+  )
+  return(tm)
+}
+
+first = matrix(rep(1:(N.yr - 1), each = N.ind), ncol=1) # When marked
+
+# Simulating Matrix of true states
+N.ind.tot = length(first)
+St = matrix(NA, N.ind.tot, N.yr) 
+for(i in 1:N.ind.tot){
+  St[i,first[i]] = 1 # All individuals introduced as alive
+  for(j in first[i]:(N.yr-1)){
+    St[i,j+1] = sample(1:4, 1, prob = fTM(h1[j], h2[j])[St[i,j],])
+  }
+}
+St[is.na(St)] = 4 # to get zero capture probability before marking
+ 
+# Computing matrix of state-dependent capture probabilities
+P = matrix(p[St], N.ind.tot, N.yr)
+
+# Simulating Capture History data
+capt = rbinom(N.ind.tot*N.yr,1,P)
+CH = St*capt
+for(i in 1:N.ind.tot){
+  CH[i,first[i]] = 1 # Conditioning on first capture; hence inds are always seen when marked  
+}
+```
+
+Then we source in the modified `marked` functions and prepare the data for model fitting:
+```{r, message=FALSE}
+library(marked)
+library(R2admb)
+prepare_admb() # Function defined above
+
+# Source in modified functions from Git-hub
+crm_csmhr_FUN = paste(reprstr1, reprstr2, "crm_csmhr.R", sep="")
+mscjs_csmhr_FUN = paste(reprstr1, reprstr2, "mscjs_csmhr.R", sep="")
+source(crm_csmhr_FUN)
+source(mscjs_csmhr_FUN)
+
+# Transforming data to a sting variable for 'marked'
+simdata = data.frame(
+  ch = apply(CH, 1, function(i) paste(c("0","A","B","C")[i+1], collapse = ""))
+)
+simdata$ch = as.character(simdata$ch)
+
+# Adding an individual seen in state D at the *last* occasion to get the right dimension
+# of the transitioin matrix. Since this individual is captured only in the last year,
+# and we condition on first capture, this individual will not affect estimates (and will
+# be removed internally)
+
+simdata = rbind(simdata, ch = paste(paste(rep("0", N.yr-1), collapse = ""), "D", sep=""))
+
+simdata.processed = process.data(simdata,model="Mscjs",strata.labels=c("A","B","C","D"))
+simdata.ddl = make.design.data(simdata.processed)
+```
+\bigskip
+
+The resultant `simdata.dll` object is a list of data frames with predictor variables for all parameters in the full (unconstrained) model; one data.frame for modelling of log hazard rates (`simdata.ddl$Psi`), and one data.frame for modelling of logit recapture/recovery probabilities (`simdata.ddl$p`). Individual covariates, grouping variables and individual ages at first capture may be included in `process.data()` (see `help(package="marked")` for documentation).
+
+$\qquad$ Below, we create variables `simdata.ddl$Psi$hunting` and `simdata.ddl$Psi$natural`, use this to constrain the model and fit it by using the modified functions:  
+```{r, message=FALSE}
+
+simdata.ddl$Psi$hunting = ifelse(simdata.ddl$Psi$tostratum == "B", 1, 0)
+simdata.ddl$Psi$natural = ifelse(simdata.ddl$Psi$tostratum == "C", 1, 0)
+
+# Submodel constraints
+model = list(
+  p = list(formula = ~ -1 + stratum),
+  Psi = list(formula = ~ -1 + natural:time + hunting:time) 
+)
+
+# NB! Convergence may be sensitive to starting values. It's a good idea to try many
+# different starting values to check for convergence at local maxima:
+inits = list(p=rep(0,3), Psi = rep(mean(log(c(h1,h2))), 2*(N.yr-1)))
+
+mod1_csmhr = crm_csmhr(simdata.processed, simdata.ddl, clean=F, model.parameters=model,
+                       initial=inits, hessian=TRUE)
+# NB! Run with clean=F, or else the executable will be deleted!
+```
+Note that is not necessary to fix the survival probabilities or fixed transition matrix elements as this is done internally in the `crm_csmhr` function.
+
+$\qquad$ To see parameter estimates and a summary of the model fit, type the name of the model object
+```{r}
+mod1_csmhr
+```
+\bigskip
+
+Here, `p` parameters are logit-linear coefficients in the model for recapture/recovery probabilities, and `Psi` parameters are coefficients in the log-linear models for each of the mortality hazard rates.
+
+$\qquad$ Please note that convergence on a local likelihood peak is not unlikely, and it is highly recommendable to try many different starting values (lower AIC values indicate higher likelihood values). It is also possible to change convergence criteria and perform various diagnostics (as well as computing likelihood profiles, confidence intervals by MCMC, etc) by passing ADMB command line options through the `extra.args` argument in `crm_csmhr` or by  modifying the `multistate_csmhr.tpl` file - see the ADMB manual at <http://www.admb-project.org/>.
+
+$\qquad$ The `marked::predict.crm` function cannot be used for prediction of mortality hazard rates (only for recapture/recovery probabilities), but we include a simple function for prediction below. Here we compute and plot the predicted mortality hazard rates and compare them to the true values used in the simulation:
+```{r}
+predict.marked.csmhr = function(fit, newdata, par, invlink){
+  model = fit$model.parameters[[par]]$formula
+  X = model.matrix(model, newdata)
+  b = fit$results$beta[[par]]
+  vc = fit$results$beta.vcv
+  nms = dimnames(vc)[[1]]
+  use = substring(nms,1,nchar(par)) == par
+  vc = vc[use,use]
+  eta = X %*% b
+  se = sqrt(diag(X %*% vc %*% t(X)))
+  D = newdata
+  D$eta = eta
+  D$se = se
+  D$est = invlink(eta)
+  D$lwr = invlink(eta - 1.96*se)
+  D$upr = invlink(eta + 1.96*se)
+  return(D)
+}
+
+D = expand.grid(year = 1:9, cause = c("hunting","natural"))
+D$time = factor(paste("time", D$year, sep=""))
+D$hunting = ifelse(D$cause == "hunting", 1, 0)
+D$natural = ifelse(D$cause == "natural", 1, 0)
+
+Pred = predict.marked.csmhr(fit = mod1_csmhr, newdata = D, par = "Psi",
+                            invlink = function(x) exp(x))
+
+# Adding true values
+Pred$true = ifelse(Pred$hunting==1, h1, h2)
+
+# Plotting 
+library(plotrix) # for plotCI
+
+par(mfrow=c(1,2))
+Ylim = range(c(Pred$lwr, Pred$upr))
+with(Pred[Pred$cause=="hunting",],
+     plotCI(year, est, ui=upr, li=lwr, gap=T, ylim=Ylim,
+            xlab = "Year", ylab = "Mortality hazard rate"))
+with(Pred[Pred$cause=="hunting",], lines(year, est, type="b"))
+with(Pred[Pred$cause=="hunting",], points(year,true, pch=16, col="red"))
+title("Hunting mortality")
+
+with(Pred[Pred$cause=="natural",],
+     plotCI(year, est, ui=upr, li=lwr, gap=T, ylim=Ylim,
+            xlab = "Year", ylab = "Mortality hazard rate"))
+with(Pred[Pred$cause=="natural",], lines(year, est, type="b"))
+with(Pred[Pred$cause=="natural",], points(year,true, pch=16, col="red"))
+title("Natural mortality")
+```
+$\qquad$ We do the same for recapture/recovery probabilities:
+```{r}
+# Recapture/recovery probability
+D.p = data.frame(stratum = c("A","B","C"))
+Pred.p = predict.marked.csmhr(fit = mod1_csmhr, newdata = D.p, par = "p",
+                              invlink = function(x) exp(x)/(1+exp(x)))
+Pred.p$true = p[1:3]
+
+Ylim = c(0,1)
+with(Pred.p,
+     plot(1:3, est, ylim=Ylim, xlim=c(0.7,3.3),
+          xlab = "", ylab = "Recapture/recovery probability", type="n", axes=F))
+with(Pred.p, plotCI(1:3, est, add=T, ui=upr, li=lwr, gap=T))
+with(Pred.p, points(1:3, true, pch=16, col="red"))
+box()
+axis(2)
+axis(1, at=1:3, labels = c("Alive", "Hunted", "Naturally dead"))
+```
+
+$\qquad$ Finally, we use the delta-method to compute approximate standard errors of the log of total mortality hazard rates and plot the confidence intervals of survival probabilities. At the same time, we compute and plot estimates of the sampling correlation between the two log hazard rates for each year (may indicate identifiability problems if highly negative).
+
+```{r}
+# Function for a single year
+S.delta = function(yr, fit, D){
+  DD = D[D$year==yr,]
+  model = fit$model.parameters[["Psi"]]$formula
+  X = model.matrix(model, DD)
+  b = fit$results$beta[["Psi"]]
+  vc = fit$results$beta.vcv
+  nms = dimnames(vc)[[1]]
+  use = substring(nms,1,3) == "Psi"
+  vc = vc[use,use]
+  log.h = X %*% b
+  VC.log.h = X %*% vc %*% t(X)
+  h = exp(log.h)
+  h.tot = sum(h)
+  log.h.tot = log(h.tot)
+  x = h/h.tot
+  var.log.h.tot = t(x) %*% VC.log.h %*% x
+  se.log.h.tot = sqrt(diag(var.log.h.tot))
+  lwr.log.h.tot = log.h.tot - 2*se.log.h.tot
+  upr.log.h.tot = log.h.tot + 2*se.log.h.tot
+  list(
+    S = exp(-h.tot),
+    lwr.S = exp(-exp(upr.log.h.tot)),
+    upr.S = exp(-exp(lwr.log.h.tot)),
+    cor.log.h = cov2cor(VC.log.h)[1,2]
+  )
+}
+
+S.est = sapply(1:(N.yr-1), S.delta, fit=mod1_csmhr, D=D)
+S.est = as.data.frame(t(S.est))
+
+par(mfrow=c(1,2))
+plot(1:(N.yr-1), unlist(S.est$S), ylim=c(0,1),
+     xlab = "Year", ylab = "Survival probability")
+with(S.est,
+     plotCI(1:(N.yr-1), unlist(S), ui=unlist(upr.S), li=unlist(lwr.S), add=T, gap=T))
+lines(1:(N.yr-1), unlist(S.est$S), type="b")
+points(1:(N.yr-1),exp(-(h1+h2)), pch=16, col="red")
+title("Survival probability")
+
+plot(1:(N.yr-1), unlist(S.est$cor.log.h), ylim=c(-1,1),
+     xlab = "Year", ylab = "Correlation", type="b")
+title("Sampling correlation\n between log hazard estimates")
+```
+
+
 
 # References {-}
 
 \begin{description}
   
+  \item Cam, E., Link, W.A., Cooch, E.G., Monnat, J.Y. \& Danchin, E. (2002) Individual covariation in life-history traits: Seeing the trees despite the forest. American Naturalist, 159, 96-105.
+  
+  \item Carlin, B.P. \& Louis, T.A. (2009) Bayesian Methods for Data Analysis. Chapman \& Hall.
+  
+  \item Caswell, H. \& John, A.M. (1992) From the individual to the population in demographic models. Individual-based models and approaches in ecology (eds D.L. DeAngelis \& L.J. Gross). Chapman \& Hall, New York, NY.
+
   \item Choquet, R., Rouan, L. \& Pradel, R. (2009) Program E-SURGE: a software application for fitting multievent models. Modeling Demographic Processes in Marked Populations (eds D.L. Thompson, E.G. Cooch \& M.J. Conroy). Springer.
   
   \item Collett, D. (2014) Modelling survival data in medical research, Third edn. CRC Press.
+  
+  \item de Valpine, P., Scranton, K., Knape, J., Ram, K. \& Mills, N.J. (2014) The importance of individual developmental variation in stage-structured population models. Ecol Lett, 17, 1026-1038.
+
+  \item Ergon, T. \& Gardner, B. (2014) Separating mortality and emigration: modelling space use, dispersal and survival with robust-design spatial capture–recapture data. Methods in Ecology and Evolution, 5, 1327-1336.
+  
+  \item Ergon, T., Yoccoz, N. \& Nichols, J.D. (2009) Estimating latent time of maturation and survival costs of reproduction in continuous time from capture-recapture data. Modeling Demographic Processes in Marked Populations (eds D. Thomson, E.G. Cooch \& M.J. Conroy). Springer Science+Business Media, LLC.
 
   \item Fournier, D.A., Skaug, H.J., Ancheta, J., Ianelli, J., Magnusson, A., Maunder, M.N., Nielsen, A. \& Sibert, J. (2012) AD Model Builder: using automatic differentiation for statistical inference of highly parameterized complex nonlinear models. Optim. Methods Softw., 27, 233-249.
+  
+  \item Goulet, V., Dutang, C., Maechler, M., Firth, D., Shapira, M. \& Stadelmann, M. (2017). expm: Matrix Exponential, Log, 'etc'. R package version 0.999-2. <https://CRAN.R-project.org/package=expm>.
 
   \item Laake, J.L., Johnson, D.S. \& Conn, P.B. (2013) marked: An R package for maximum-likelihood and MCMC analysis of capture-recapture data. Methods in Ecology and Evolution, 4, 885-890.
   
+  \item Langtimm, C.A. (2009) Non-random temporary emigration and the robust-design: conditions for bias at the end of a time series. Modelling Demographic Processes in Marked Populations (eds D.L. Thomson, E.G. Cooch \& M.J. Conroy). Springer Science+Business Media, LLC.
+  
   \item Link, W.A. \& Doherty, P.F. (2002) Scaling in sensitivity analysis. Ecology, 83, 3299-3305.
   
+  \item Miller, T.J. \& Andersen, P.K. (2008) A finite-state continuous-time approach for inferring regional migration and mortality rates from archival tagging and conventional tag-recovery experiments. Biometrics, 64, 1196-1206.
+
+  \item Quinn, T.J. \& Deriso, R.B. (1999) Quantitative fish dynamics. Oxford University Press.
+  
+  \item Ricker (1975) Computation and interpretation of biological statistics of fish populations. Bull. Fish. Res. Board Can., 191.
+
+  \item Schaub, M. (2009) Evaluation of bias, precision and accuracy of mortality cause proportion estimators from ring recovery data. Modeling Demographic Processes in Marked Populations (eds D. Thomson, E.G. Cooch \& M.J. Conroy). Springer Science+Business Media, LLC.
+
+  \item Schaub, M. \& Pradel, R. (2004) Assessing the relative importance of different sources of mortality from recoveries of marked animals. Ecology, 85, 930.
+
   \item Stubben, C.J. \& Milligan, B.G. (2007) Estimating and Analyzing Demographic Models Using the popbio Package in R. Journal of Statistical Software, 22(11).
+  
+  \item Vaupel, J.W., Manten, K.G. \& Stallard, E. (1979) The impact of heterogeneity in individual frailty on the dynamics of mortality. Demography, 16, 439-454.
 
   \item White, G.C. \& Burnham, K.P. (1999) Program MARK: Survival estimation from populations of marked animals. Bird Study, 46 Supplement, 120-138.
 
 \end{description}
-
----
-#[**Co-authors:** Sometimes I feel I spend too much time explaining rather obvious things in detail, but keep in mind that (1) those who will read this text are those that didn't get it from reading the main text, (2) few readers will probably read the whole appendix, but rather read the parts they are interested in (or did not understand), (3) we want to reach out to a wide audience (those that need to read it have not thought much about these issues before). Let me know if you think I go too far.]
----
