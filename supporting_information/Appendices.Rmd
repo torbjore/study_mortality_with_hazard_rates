@@ -12,7 +12,7 @@ header-includes:
   \DeclareMathOperator{\VSS}{VSS}
   \DeclareMathOperator{\logit}{logit}
   \DeclareMathOperator{\loglog}{loglog}
-title: "Supporting information for 'Study mortality with hazard rates, not probabilities'" 
+title: "Supporting information for 'The utility of mortality hazard rates in population analyses'" 
 
 author: \bigskip Torbj\o rn Ergon$^{a*}$, \O rnulf Borgan$^{b}$, Chloe Rebecca Nater$^{a}$ and Yngvild Vindenes$^{a}$
 
