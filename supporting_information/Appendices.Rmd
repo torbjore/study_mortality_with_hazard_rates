@@ -53,7 +53,9 @@ If the mortality hazard rate is considered as a continuous function of time, $h(
 $$S_{t_1 \rightarrow t_2}= e^{-\int_{t_1}^{t_2}h(t)dt}.$$
 $\qquad$ For further relationships and derivations, see Collet (2014, chap. 1.3) and section \ref{Ecle} below.
 
-## Logit-linear models of survival vs. log-linear models of mortality rates
+$\qquad$ As an analogy, the safety of a car or driver may be described as the expected number of collisions per kilometre (i.e., a hazard rate). This hazard rate may be expressed with any distance unit. One can also express the safety of the car or driver as a probability of avoiding collision (i.e., a survival probability) when driving a given distance. A probability has no unit, so the distance for which the probability is defined is essential for its meaning. If the probability is defined at a very short distance the probability of avoiding collision is almost one, and if the distance is long enough, the "survival" probability is almost zero. Even if substantial road (environmental) improvements were made, these two probabilities would still be approximately one (infinite odds) and zero (zero odds), irrespective of the driver (individual differences). When modelling environmental (road) effects, a natural starting point is to assume that environmental differences (road improvements) have a proportional effect (i.e., a certain percentage change in the hazard rate). This leads to a log-linear model for the hazard rate (see section on "Log-linear models of mortality hazard rates vs. logit-linear models of survival probabilities"). Alternatively, if the total hazard rate is composed of several cause-specific hazards, and some of these causes are eliminated, a model with additive effect of the total hazard rate would be appropriate (see section on "Modelling of multiple sources of mortality and competing risks"). A proportional (log-linear) or additive model for survival probabilities or odds defined for a *predefined* driving distance (or time) requires a justification for the choice of driving distance used in the model, which seems more arbitrary.
+
+## Log-linear models of mortality hazard rates vs. logit-linear models of survival probabilities
 
 ### Relationships
 
@@ -71,10 +73,12 @@ $$\exp(\eta_2 - \eta_1) = \frac{\exp(\eta_2)}{\exp(\eta_1)} = \frac{\bar{h}_2}{\
 
 [^fn:alt_loglog]: Note that some computer programs for analyses of capture-recapture data, such as MARK, define the inverse loglog-link as $S = \exp(-\exp(-\eta))$, in which case the hazard ratio $\frac{\bar{h}_2}{\bar{h}_1}$ becomes $\exp(\eta_1 - \eta_2)$.
 
-$\qquad$ One could reparameterize the discrete-time model with e.g. monthly survival probabilities ($S_m$) instead of yearly survival probabilities ($S_y$). If one assumes that all months of the year have the same survival probability, this amounts to just replacing all $S_y$ in the model with $(S_m)^{12}$.[^fn:reparam] When using a loglog-link on survival probabilities, the model is invariant to such replacements because the time-averaged hazard rate remains unchanged. If this does not appear as obvious, one may see this better by first calculating the time-averaged hazard rate as $\bar{h}_y = -\log(S_y)$. The unit for $\bar{h}_y$ is here year$^{-1}$. Similarly, the time-averaged hazard rate can also be calculated as $\bar{h}_m = -\log(S_m)$, where $\bar{h}_m$ is expressed in units of month$^{-1}$. Since $S_y = (S_m)^{12}$, we see that $\bar{h}_y = -\log((S_m)^{12}) = -12\log(S_m) = 12\bar{h}_m$, and since an intensity of one event per month is the same as an intensity of 12 events per year, the two hazard rates $\bar{h}_y$ and $\bar{h}_m$ are identical (they just have different units of expression). Note also that the ratio of two hazard rates (i.e., hazard ratios) are invariant to which unit of expression is used for the hazard rates. Hence, when modelling survival probabilities through a loglog-link, all parameters in the linear predictor except the intercept are invariant to reparameterizations on the form $S_y = (S_m)^{12}$. This can be seen from expanding $\bar{h}_y = 12\bar{h}_m$,
+$\qquad$ One could reparameterize the discrete-time model with e.g. monthly survival probabilities ($S_m$) instead of yearly survival probabilities ($S_y$). If one assumes that all months of the year have the same survival probability, this amounts to just replacing all $S_y$ in the model with $(S_m)^{12}$.[^fn:reparam] When using a loglog-link on survival probabilities, the parameters in the model is invariant to such replacements because the time-averaged hazard rate remains unchanged. If this does not appear as obvious, one may see this better by first calculating the time-averaged hazard rate as $\bar{h}_y = -\log(S_y)$. The unit for $\bar{h}_y$ is here year$^{-1}$. Similarly, the time-averaged hazard rate can also be calculated as $\bar{h}_m = -\log(S_m)$, where $\bar{h}_m$ is expressed in units of month$^{-1}$. Since $S_y = (S_m)^{12}$, we see that $\bar{h}_y = -\log((S_m)^{12}) = -12\log(S_m) = 12\bar{h}_m$, and since an intensity of one event per month is the same as an intensity of 12 events per year, the two hazard rates $\bar{h}_y$ and $\bar{h}_m$ are identical (they just have different units of expression). Note also that the ratio of two hazard rates (i.e., hazard ratios) are invariant to which unit of expression is used for the hazard rates. Hence, when modelling survival probabilities through a loglog-link, all parameters in the linear predictor except the intercept are invariant to reparameterizations on the form $S_y = (S_m)^{12}$. This can be seen from expanding $\bar{h}_y = 12\bar{h}_m$,
 $$\bar{h}_y = 12\bar{h}_m = 12\exp(\beta_0 + \beta_{1}x_{1} + \beta_{2}x_{2} + ...) = \exp((\log(12) + \beta_0) + \beta_{1}x_{1} + \beta_{2}x_{2} + ...) $$
 
 [^fn:reparam]: Note that this is a reparameterization since $S_y$ and $S_m$ have different meanings - it is not about "selecting a time-scale for the survival probabilities". Survival probabilities are unit-free absolute scale measurements that cannot be "re-scaled" in any way. Such reparameterizations of the general (full, unconstrained) model may be specified in e.g. MARK, and is commonly done when time between capture occasions vary over the study period.
+
+I.e., the effect sizes in the log-hazard model is "parameterization invariant" (Pace \& Salavan 1997).
 
 $\qquad$ It is (unfortunately) common practice to model effects of covariates on survival probabilities through the use of a logit link-function. That is, survival probability is modelled as
 $$S=\frac{\exp(\eta)}{1+\exp(\eta)},$$
@@ -189,11 +193,11 @@ points(c(1,2), c(HR,HR), pch=4, cex=1.7)              # Improved environment; ha
 
 From Fig. 2, it may be noted that odds-ratios approach the inverse of the hazard ratio ($1/0.5 = 2$) when survival probabilities are high; i.e., when the survival probability of the reference is high (magenta line) or when interval lengths are short (to the left in the plot).
 
-## Multiple sources of mortality and competing risks 
+## Modelling of multiple sources of mortality and competing risks 
 
-Mortality hazard rates are more elucidating with respect to the underlying mechanisms than mortality probabilities when studying associations between two or more sources of mortality in a population because mortality probabilities are intrinsically dependent; increasing the hazard rate for one cause of mortality will automatically reduce the probabilities of dying from all other causes (Appendix S2). Figure 3 in the main text shows how this negative intrinsic dependency can dominate empirical correlations between cause specific mortality probabilities across years even when correlations between the cause specific mortality hazard rates are strongly positive.
+Mortality hazard rates are more elucidating with respect to the underlying mechanisms than mortality probabilities when studying associations between two or more sources of mortality in a population because mortality probabilities are intrinsically dependent; increasing the hazard rate for one cause of mortality will automatically reduce the probabilities of dying from all other causes (Appendix S2). Figure 3 in the main text shows how this negative intrinsic dependency can dominate empirical correlations between cause-specific mortality probabilities across years even when correlations between the cause-specific mortality hazard rates are strongly positive.
 
-$\qquad$ Figure 4 illustrates the relationships between cause-specific mortality hazard rates and survival probabilities in a age-dependent model. We note here that, in empirical studies of senescence, one should also consider potential biases arising from un-modelled individual heterogeneity (i.e., “frailty”[^fn:frailty]) (Vaupel, Manten & Stallard 1979; Cam et al. 2002; Collett 2014), temporary emigration (Langtimm 2009) and age-dependent dispersal (Ergon & Gardner 2014).
+$\qquad$ Figure 4 illustrates the relationships between cause-specific mortality hazard rates and survival probabilities in a age-dependent model. We note here that, in empirical studies of senescence, one should also consider potential biases arising from un-modelled individual heterogeneity (i.e., "frailty"[^fn:frailty]) (Vaupel, Manten & Stallard 1979; Cam et al. 2002; Collett 2014), temporary emigration (Langtimm 2009) and age-dependent dispersal (Ergon & Gardner 2014).
 
 [^fn:frailty]: Unobserved individual heterogeneity in mortality hazard rates. In the presence of frailty, the population will be increasingly dominated by individuals with low mortality hazard rates at higher age-classes. Hence, age-related patterns in population level mortality rates are not representative of individual level patterns.
 
@@ -251,7 +255,7 @@ title(expression(SD(log~italic(h)) == 0.01))
 ```
 
 ### Figure 4
-Figure 4 illustrates the fact that, if one of two cause specific mortality *probabilities* is constant (red line in panel a) while the other increases with age, both cause specific mortality *hazard rates* must increase with age (panel b).
+Figure 4 illustrates the fact that, if one of two cause-specific mortality *probabilities* is constant (red line in panel a) while the other increases with age, both cause-specific mortality *hazard rates* must increase with age (panel b).
 
 #### Code - Figure 4
 ```{r, fig.height=5, fig.width=8, fig.cap="See caption in the main text.", out.extra=''}
@@ -292,21 +296,19 @@ legend("topleft", legend=c("Human-related", "Natural"), col=c("red","blue"),
 title("(b)", adj=0)
 ```
 
-## Elasticity analyses based on mortality hazard rates instead of survival probabilities
+## Mortality hazard rates and elasticity analyses
 
 ### Relationships
 
-#### Elasticity to $S$ and $\bar{h}$
+#### Elasticity to $\bar{h}$ and $S$
 
-In the main text, the relationship between elasticity of population growth rate $\lambda$ to survival probability $S$ over an interval, $\epsilon_{S}$, and elasticity to time-averaged mortality hazard rate $\bar{h}$ during the same interval, $\epsilon_{\bar{h}}$, is given as
-$$\epsilon_{\bar{h}}=-\bar{h}\epsilon_{S}$$
-To derive this, note the relationship $\bar{h}=-\log(S)$ (eq. (2) in the main text), and remember that the elasticities are defined as $\epsilon_{\bar{h}} = \frac{\partial \log(\lambda)}{\partial \log(\bar{h})}$ and $\epsilon_{S} = \frac{\partial \log(\lambda)}{\partial \log(S)}$. By using the chain rule of derivation, we get
+To derive the relationship between elasticity of population growth rate $\lambda$ to survival probability $S$ over an interval, $\epsilon_{S}$, and elasticity to time-averaged mortality hazard rate $\bar{h}$ during the same interval, $\epsilon_{\bar{h}}$, note first the relationship $\bar{h}=-\log(S)$ (eq. (2) in the main text) where the time-unit for $\bar{h}$ is the inverse of the length of the interval. By using the chain rule of derivation, we get
 $$\epsilon_{\bar{h}} 
 = \frac{\partial \log(\lambda)}{\partial \log(\bar{h})}
 = \frac{\partial \log(\lambda)}{\partial \log(S)} \frac{\partial \log(S)}{\partial \log(\bar{h})}
 = \epsilon_{S}\frac{\partial (-\bar{h})}{\partial \log(\bar{h})}
-= \epsilon_{S}(-\bar{h})
-= \epsilon_{S} \log(S).$$
+= -\bar{h}\epsilon_{S}
+$$
 
 #### Dependencies on interval length
 
@@ -319,6 +321,24 @@ $$
 $$
 $\qquad$ Elasticities to instantaneous mortality hazard rates, or their time-averaged values ($\bar{h}=-\log(S)$), are invariant to any such reparameterizations with respect to the choice of interval length of the discrete model. If this is not intuitive, consider the relationship $\epsilon_{\bar{h}} = \epsilon_{S_y} \log(S_y) = \frac{1}{12} \epsilon_{S_m}12\log(S_m) = \epsilon_{S_m} \log(S_m)$.
 
+#### Elasticities to additive (cause-specific) components of the total hazard rate
+
+As explained in Appendix S2, when there are multiple causes of death, the total mortality hazard rate is the sum of the cause-specific hazard rates $h_{k}$
+$$
+h = \sum_{k=1}^{K} h_{k}
+$$
+Applying the chain rule to find the elasticity to a cause-specific hazard rate, we get
+$$
+\epsilon_{h_{k}}
+= \frac{\partial \log(\lambda)}{\partial \log(h_{k})}
+= \frac{\partial \log(\lambda)}{\partial \log(h)} \frac{\partial \log(h)}{\partial \log(h_{k})}
+= \epsilon_{h} \frac{h_k}{h}
+$$
+Hence, the elasticity to the total mortality hazard rate equals the sum of the elasticities to the cause-specific hazard rates,
+$$
+\epsilon_{h} = \sum_{k=1}^{K} \epsilon_{h_{k}}
+$$
+
 #### Elasticity to mortality probability
 
 As pointed out by Link \& Doherty (2002), the relationship between elasticity to mortality probability, $\epsilon_P$, and elasticity to survival probability, $\epsilon_S$, is
@@ -329,9 +349,9 @@ $$
 = \epsilon_S \frac{\partial S}{\partial (1-S)} \frac{1-S}{S}
 = -\epsilon_S \left( \frac{1-S}{S} \right).
 $$
-That is, a given relative decrease in morality probability only has the same impact on population growth rate (or fitness) as the same relative increase in survival probability when $S=0.5$. Moving away from $S=0.5$ in either direction, these two elasticities will be increasingly different. It seems hard to justify why any of these elasticities should be more relevant than the other (Link \& Doherty 2002); they represent very different degrees of change in the mortality process when $S$ is not close to $0.5$. Elasticity to mortality hazard rate, on the other hand, has a clear and meaningful interpretation; it is the relative change in population growth rate caused by a relative increase in the intensity at which individuals die (Box 1 in the main text).
+That is, a given relative decrease in morality probability only has the same impact on population growth rate (or fitness) as the same relative increase in survival probability when $S=0.5$. Moving away from $S=0.5$ in either direction, these two elasticities will be increasingly different and hence represent very different degrees of change in the underlying mortality process when $S$ is not close to $0.5$. Elasticity to mortality hazard rate, on the other hand, has a clear and meaningful interpretation; it is the relative change in population growth rate caused by a relative increase in the intensity at which individuals die (Box 1 in the main text). Further, as explained below, $-\epsilon_{\bar{h}}$ is the elasticity to "current life-expectancy".
 
-#### Elasticity to “current life-expectancy” \label{Ecle}
+#### Elasticity to "current life-expectancy" \label{Ecle}
  
 The relationship between the mortality hazard rate $h(t)$ and the probability density for death at time $t$, $f(t)$, is given as
 $$h(t) = \frac{f(t)}{1-\int_0^t f(\tau)d\tau}.$$
@@ -344,7 +364,7 @@ $$\frac{\partial \log(\lambda)}{\partial \log(1/h)} = -\frac{\partial \log(\lamb
 
 #### Perspectives on hazard rates and models of stage-duration distributions \label{perspectives}
 
-The notion of elasticity to life-expectancy introduced in section \ref{Ecle} above is similar to the notion of elasticity to stage-duration in the absence of mortality (de Valpine et al. 2014). Structured population models based on stage-duration distributions (de Valpine et al. 2014) may be specified by either specifying the stage-duration distribution itself, $f(t)$, or by specifying the corresponding hazard function $h(t)$ (see relationships in section \ref{Ecle}). If individuals can leave a certain state to $K>1$ other state ('death' being one of them), the unconditional state-duration distribution is the probability distribution corresponding to the total hazard rate $h_{tot} (t) = \sum_{k=1}^K h_k(t)$, where $h_k(t)$ are the transition specific hazard rates. It is, however, often of greater interest to study the probability distributions for age or time of state-transition conditional on survival. For example, Ergon et al. (2009) estimated the latent distributions[^fn:latent_distribution] for seasonal timing of onset of reproduction in populations of overwintering field voles.
+The notion of elasticity to life-expectancy introduced in section \ref{Ecle} above is similar to the notion of elasticity to stage-duration in the absence of mortality (de Valpine et al. 2014). Structured population models based on stage-duration distributions (de Valpine et al. 2014) may be specified by either specifying the stage-duration distribution itself, $f(t)$, or by specifying the corresponding hazard function $h(t)$ (see relationships in section \ref{Ecle}). If individuals can leave a certain state to $K>1$ other states ('death' being one of them), the unconditional state-duration distribution is the probability distribution corresponding to the total hazard rate $h_{tot} (t) = \sum_{k=1}^K h_k(t)$, where $h_k(t)$ are the transition specific hazard rates. It is, however, often of greater interest to study the probability distributions for age or time of state-transition conditional on survival. For example, Ergon et al. (2009) estimated the latent distributions[^fn:latent_distribution] for seasonal timing of onset of reproduction in populations of overwintering field voles.
 
 [^fn:latent_distribution]: By 'latent distributions' we here mean the distribution of the life-history trait that is independent of mortality, and this distribution represent the trait that is under selection. In contrast, the 'realized distribution' is the distribution of time/age of maturation among those individuals that survive until maturation. Because individuals that have a late latent maturation need to survive over a longer period before maturation can be observed, these individuals will be under-represented in the realized distribution (unless individual time/age of maturation is strongly negatively correlated with mortality hazard rate).
 
@@ -352,7 +372,7 @@ $\qquad$ Matrix population models are memory-less (Markovian) in the sense that 
 
 $\qquad$ Whenever individuals can transition from one state to more than one other state (including mortality), there is a competing risk situation among the potential transitions (Appendix S2). In addition, individuals may transition from one state to another state (or back to the original state) via other states during a given time period. A general, and very useful, tool to compute transition probability matrices from transition hazards between any number of states, involve the use of matrices of transition hazards and matrix exponentials (Keyfitz \& Caswell 2005 chap. 17.5; Miller \& Andersen 2008; Conn et al. 2012): First, a matrix $\mathbf{A}$ is constructed with transition hazards as the off-diagonal elements, and the negative sum of all transition hazards out of the given state as the diagonal elements, such that each row in $\mathbf{A}$ sums to zero. The corresponding transition probability matrix for an interval of length $\Delta$ is then simply
 $$\mathbf{P} = \exp(\mathbf{A}\Delta).$$
-`exp` refers here to a matrix exponential; function ‘expm’ in the ‘expm’ package of R (Goulet et al. 2017) and function ‘MatrixExponential’ in the LinearAlgebra package in Maple\textsuperscript{TM}. See Miller \& Andersen (2008) and Conn et al. (2012) for various examples. To include continuous hazard functions of time, or time since entering the states (as discussed above), one may discretize by computing transition probability matrices over many short time-intervals (e.g. days), assuming constant hazard rates within each interval.
+`exp` refers here to a matrix exponential; function "expm" in the "expm" package of R (Goulet et al. 2017) and function "MatrixExponential" in the LinearAlgebra package in Maple\textsuperscript{TM}. See Miller \& Andersen (2008) and Conn et al. (2012) for various examples. To include continuous hazard functions of time, or time since entering the states (as discussed above), one may discretize by computing transition probability matrices over many short time-intervals (e.g. days), assuming constant hazard rates within each interval.
 
 
 ### Figures 5 and 6
@@ -529,8 +549,8 @@ bins = seq(-maxval, maxval, length.out=19)
 filled.contour(Sj, Sa, log(Er.S), levels=bins, nlevels=18, col=Col,
         plot.axes={axis(1); axis(2); text(c(0.2, 0.6), c(0.6, 0.2), c("a","b"),
                                           cex=1.3)},
-        plot.title = title("Elasticity ratio - survival", cex.main=1.1,
-                                  xlab="Juvenile survival", ylab="Adult survival"),
+        plot.title = title("Elasticity ratio - survival probability", cex.main=1.1,
+                                  xlab="Juvenile survival probability", ylab="Adult survival probability"),
         key.title = title(main = "ln(ratio)", cex.main=0.9, line=1))
 title("(a)", outer=T, adj=0.05, line=-2)
 ```
@@ -541,7 +561,7 @@ title("(a)", outer=T, adj=0.05, line=-2)
 filled.contour(Sj, Sa, log(Er.h), levels=bins, nlevels=18, col=Col,
         plot.axes={axis(1); axis(2); text(c(0.2, 0.6), c(0.6, 0.2), c("a","b"), cex=1.3)},
         plot.title = title("Elasticity ratio -  - mortality rate", cex.main=1.1,
-                                  xlab="Juvenile survival", ylab="Adult survival"),
+                                  xlab="Juvenile survival probability", ylab="Adult survival probability"),
         key.title = title(main = "ln(ratio)", cex.main=0.9, line=1))
 title("(b)", outer=T, adj=0.05, line=-2)
 ```
@@ -618,7 +638,7 @@ Hence, using the loglog-link to obtain a variance-stabilized sensitivity to surv
 \setcounter{figure}{0} 
 
 
-```{r, echo=FALSE, fig.height=4, fig.width=10, fig.cap="Realized times of two types of independent recurrent events (or “deadly events experienced by an immortal individual”)", out.extra=''}
+```{r, echo=FALSE, fig.height=4, fig.width=10, fig.cap="Realized times of two types of independent recurrent events (or \"deadly events experienced by an immortal individual\")", out.extra=''}
 set.seed(1)
 
 
@@ -635,11 +655,11 @@ axis(1, at = blue.events, labels=F, col.ticks="blue", tcl=1.3, pos=0, lwd.ticks=
 
 ```
 
-Figure S2.1 illustrates a situation where another (“blue”) cause of mortality has been added to the “red” cause of mortality illustrated in the figure in Box 1 in the main text. If we, for simplicity, assume that the hazard rates for these two causes of mortality are constant over an interval with values $h_1$ and $h_2$, the total mortality hazard rate is now $h_1+h_2$, and the probability of surviving the interval of length $\Delta$ is $S=e^{-(h_1+h_2 )\Delta}$.
+Figure S2.1 illustrates a situation where another ("blue") cause of mortality has been added to the "red" cause of mortality illustrated in the figure in Box 1 in the main text. If we, for simplicity, assume that the hazard rates for these two causes of mortality are constant over an interval with values $h_1$ and $h_2$, the total mortality hazard rate is now $h_1+h_2$, and the probability of surviving the interval of length $\Delta$ is $S=e^{-(h_1+h_2 )\Delta}$.
 
-$\qquad$ It is essential to realize that adding the blue cause of mortality in this example reduces the probability of dying from the red cause, even though the hazard rate representing the red cause remains the same. This is due to the fact that the individual now may die from a blue cause before a red event takes place. The probability of dying from a specific cause (often referred to as a "risk"), when the hazard rate of this cause remains unchanged, will always go down when the hazard rate of other mortality causes increase (or go up if the hazard rate of other causes decrease). One may say that the risks of death are "competing", and the probability of “winning” depends on the strength of the competitors (i.e., mortality probabilities are intrinsically linked). Hence, a change in the probability of dying of a specific cause may be due to changes in any of the cause specific mortality hazard rates. When studying e.g., environmental influence on different causes of mortality, or how different causes of mortality vary and co-vary among groups of individuals or among years within a population, it is therefore of prime interest to estimate the hazard rates of different causes of mortality rather than the probabilities of dying from different causes.
+$\qquad$ It is essential to realize that adding the blue cause of mortality in this example reduces the probability of dying from the red cause, even though the hazard rate representing the red cause remains the same. This is due to the fact that the individual now may die from a blue cause before a red event takes place. The probability of dying from a specific cause (often referred to as a "risk"), when the hazard rate of this cause remains unchanged, will always go down when the hazard rate of other mortality causes increase (or go up if the hazard rate of other causes decrease). One may say that the risks of death are "competing", and the probability of "winning" depends on the strength of the competitors (i.e., mortality probabilities are intrinsically linked). Hence, a change in the probability of dying of a specific cause may be due to changes in any of the cause-specific mortality hazard rates. When studying e.g., environmental influence on different causes of mortality, or how different causes of mortality vary and co-vary among groups of individuals or among years within a population, it is therefore of prime interest to estimate the hazard rates of different causes of mortality rather than the probabilities of dying from different causes.
 
-$\qquad$ Discrete-time models (such as classical capture recapture models) that incorporate different causes of mortality involve state-transition probability parameters representing the probabilities that an individual that is alive at one time-point ($t_1$) is either alive or dead from specific causes at a later point in time ($t_2$). These transition probabilities should sum to 1. Hence, $S + \sum_{k=1}^{K}{P_k} = 1$, where $S$ is the survival probability and the $P_k$'s are the probabilities of dying from different causes classified in $K$ categories. Assuming, for simplicity, that each of the cause specific hazard rates, $h_k$ are constant within intervals, we know from above that $S=e^{-\sum_{k=1}^{K}h_k\Delta}$. To find the probability of dying from cause $k$, $P_k$, we may use the definition of hazard rates as
+$\qquad$ Discrete-time models (such as classical capture recapture models) that incorporate different causes of mortality involve state-transition probability parameters representing the probabilities that an individual that is alive at one time-point ($t_1$) is either alive or dead from specific causes at a later point in time ($t_2$). These transition probabilities should sum to 1. Hence, $S + \sum_{k=1}^{K}{P_k} = 1$, where $S$ is the survival probability and the $P_k$'s are the probabilities of dying from different causes classified in $K$ categories. Assuming, for simplicity, that each of the cause-specific hazard rates, $h_k$ are constant within intervals, we know from above that $S=e^{-\sum_{k=1}^{K}h_k\Delta}$. To find the probability of dying from cause $k$, $P_k$, we may use the definition of hazard rates as
 $$h(t) = \lim_{dt \rightarrow 0} \Pr(t  \leqslant T < t+dt|t<T)/dt$$
 (Collett 2014) where $T$ is time of death and $dt$ is an infinitesimally small unit of time (i.e., $h(t)dt$ is the probability that the individual will die before time $t+dt$ given that it is alive at time $t$). From this we see that the relationship between the hazard rate and the probability density for time of death at time $t$, $f(t)$, is
 $$h(t) = \frac{f(t)}{S(t)}$$ 		
@@ -647,7 +667,7 @@ where $S(t)$ is the probability of being alive at time $t$, which equals $1-\int
 $$f_k(\tau)=h_k e^{-\tau\sum_{l=0}^K h_l}$$
 Note that this density function is not a proper probability distributions function as it does not integrate to 1 over infinite time. Instead, it integrates to the probability of ever dying from cause $k$, which in the case of constant hazard rates becomes $h_k/\sum_{l=1}^K h_l$. To find the probability of dying from cause $k$ before the end of the interval, we need to integrate $f_k (\tau)$ from $\tau=0$ to $\tau = \Delta$ ($=t_2-t_1$), and get
 $$P_k = \int_0^{\Delta} f_k(\tau)d\tau = \left({ 1-e^{-\Delta \sum_{l=1}^K h_l} }\right) \frac{h_k}{\sum_{l=1}^K h_l} = \left({ 1-S }\right) \frac{h_k}{\sum_{l=1}^K h_l}$$
-This expression can be generalized to cases where cause specific hazard rates may vary over time but remain proportional throughout the interval such that $\alpha_k=h_k(t)/\sum_{l=1}^K h_l(t)$, in which case we get
+This expression can be generalized to cases where cause-specific hazard rates may vary over time but remain proportional throughout the interval such that $\alpha_k=h_k(t)/\sum_{l=1}^K h_l(t)$, in which case we get
 $$P_k=(1-S)\alpha_k$$
 $\qquad$ Note that the conditional probability of having died from cause $k$, given that the individual has died, in the case of proportional hazard rates is the fraction of the total mortality hazard rate attributed to the specific cause, $\alpha_k$, which in this case equals the probability of ever dying of this cause. This is, however, not the case when hazard rates are not proportional over time.
 
@@ -692,7 +712,7 @@ p_0 & p_1 & p_2 & 0
 $$
 In the most general (full, unconstrained) model, parameters would be individual and year specific, but indices are omitted here for simplicity. Survival probabilities in the general multi-state capture-recapture models must be fixed to 1 for the three first states and to 0 (or any probability value) for the absorbing state.
 
-$\qquad$ To facilitate modelling of mortality hazard rates, we modified the functions used for fitting multi-state capture-recapture models in the R-package ‘marked’ package (Laake, Johnson \& Conn 2013). This package combines a system for highly flexible model formulations (including modelling of covariate effects relating to time, age, cohort and individuals), similar to the popular 'RMark' package, with highly efficient numerical optimization of the likelihood function using automatic differentiation through executables compiled by the ADMB software (Fournier et al. 2012). The files are available on <https://github.com/torbjore/study_mortality_with_hazard_rates>, and a worked example using simulated data is included below.
+$\qquad$ To facilitate modelling of mortality hazard rates, we modified the functions used for fitting multi-state capture-recapture models in the R-package 'marked' package (Laake, Johnson \& Conn 2013). This package combines a system for highly flexible model formulations (including modelling of covariate effects relating to time, age, cohort and individuals), similar to the popular 'RMark' package, with highly efficient numerical optimization of the likelihood function using automatic differentiation through executables compiled by the ADMB software (Fournier et al. 2012). The files are available on <https://github.com/torbjore/study_mortality_with_hazard_rates>, and a worked example using simulated data is included below.
 
 $\qquad$ Schaub \& Pradel (2004) and Schaub (2009) noted that only some sub-models of another version of the general multi-state capture-recapture model (see Table 1 in the main text) are identifiable. This is also the case for our model, but a detailed treatment of identifiability is beyond our scope here.
 
@@ -985,7 +1005,7 @@ title("Sampling correlation\n between log hazard estimates")
   
   \item de Valpine, P., Scranton, K., Knape, J., Ram, K. \& Mills, N.J. (2014) The importance of individual developmental variation in stage-structured population models. Ecol Lett, 17, 1026-1038.
 
-  \item Ergon, T. \& Gardner, B. (2014) Separating mortality and emigration: modelling space use, dispersal and survival with robust-design spatial capture–recapture data. Methods in Ecology and Evolution, 5, 1327-1336.
+  \item Ergon, T. \& Gardner, B. (2014) Separating mortality and emigration: modelling space use, dispersal and survival with robust-design spatial capture-recapture data. Methods in Ecology and Evolution, 5, 1327-1336.
   
   \item Ergon, T., Yoccoz, N. \& Nichols, J.D. (2009) Estimating latent time of maturation and survival costs of reproduction in continuous time from capture-recapture data. Modeling Demographic Processes in Marked Populations (eds D. Thomson, E.G. Cooch \& M.J. Conroy). Springer Science+Business Media, LLC.
 
@@ -1000,6 +1020,8 @@ title("Sampling correlation\n between log hazard estimates")
   \item Link, W.A. \& Doherty, P.F. (2002) Scaling in sensitivity analysis. Ecology, 83, 3299-3305.
   
   \item Miller, T.J. \& Andersen, P.K. (2008) A finite-state continuous-time approach for inferring regional migration and mortality rates from archival tagging and conventional tag-recovery experiments. Biometrics, 64, 1196-1206.
+  
+  \item Pace, L. \& Salavan, A. (1997) Principles of statistical inference: from a neo-Fisherian perspective. World Scientific Publishing Co.
 
   \item Quinn, T.J. \& Deriso, R.B. (1999) Quantitative fish dynamics. Oxford University Press.
   
