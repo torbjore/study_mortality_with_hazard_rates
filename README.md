@@ -1,10 +1,10 @@
-# study_mortality_with_hazard_rates
+﻿# The utility of mortality hazard rates in population analyses
 
 Author: Torbjørn Ergon
 
-Date: 9 April 2018
+Date: 15 June 2018
 
-These files accompany the paper «Study mortality with hazard rates, not probabilities» - https://doi.org/10.1101/216739
+These files accompany the paper «The utility of mortality hazard rates in population analyses» - https://doi.org/10.1101/216739
 
 
 * The directory ‘supporting_information’ contains the R Markdown file used to generate the Supporting Information containing 3 appendices.
