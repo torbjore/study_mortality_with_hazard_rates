@@ -18,7 +18,7 @@ author: \bigskip Torbj\o rn Ergon$^{a*}$, \O rnulf Borgan$^{b}$, Chloe Rebecca N
 
 date: \small $^{a}$Centre for Ecological and Evolutionary Synthesis, University of Oslo, P.O. Box 1066 Blindern, 0316 Oslo, Norway. \newline $^{b}$Department of Mathematics, University of Oslo, P.O. Box 1066 Blindern, 0316 Oslo, Norway. \newline $^{*}$Corresponding author, e-mail t.h.ergon@ibv.uio.no \newline "`r Sys.Date()`"
 
-abstract: This document provides additional information relating to each section and figure in the main article (<https://doi.org/10.1101/216739> (link will be updated upon acceptance in the journal)). The document is written in R Markdown. The Markdown source file (.Rmd) is available at <https://github.com/torbjore/study_mortality_with_hazard_rates>. It contains all R-code needed to reproduce all figures and examples in this document (see <https://rmarkdown.rstudio.com/>).
+abstract: This document provides additional information relating to each section and figure in the main article (<https://doi.org/10.1101/216739>; doi will be updated when available from Wiley). The document is written in R Markdown and the source file (.Rmd) is available at <https://github.com/torbjore/study_mortality_with_hazard_rates>. It contains all R-code needed to reproduce all figures and examples in this document (see <https://rmarkdown.rstudio.com/>).
 ---
 
 \clearpage
@@ -92,7 +92,7 @@ which is not easily simplified. Hence, replacing  $S_y$ with $(S_m)^{12}$ change
 $$S_y = (\exp(-\bar{h}_m))^{12} = \left( \exp(-\exp(\eta)) \right)^{12} = \exp(-12\exp(\eta)) = \exp(-\bar{h}_y),$$
 and, as also explained above, the functional relationships between the covariates and survival remains unchanged (only the intercept is changed to reflect the change in unit of expression for the time-averaged hazard rates).
 
-$\qquad$ In conclusion, when using the model $S = (\logit^{-1}(\beta_0 + \beta_1 x_1))^n$ where $n$ is the length of the survival interval in the chosen time-units, $n$ can be interpreted as a parameter that is fixed by the modeller (e.g., by setting the time-interval length in MARK). In contrast, the model $S = (\loglog^{-1}(\beta_0 + \beta_1 x_1))^n$ is equivalent to $S = (\loglog^{-1}(\beta_0' + \beta_1 x_1))$ where $\beta_0'=\log(n)+\beta_0$. Hence, when using a loglog-link, changing the time-scale just amounts to changing the definition of the intercept parameter but the model remains the same (i.e., it is a reparameterization).
+$\qquad$ In conclusion, when using the model $S = (\logit^{-1}(\beta_0 + \beta_1 x_1))^n$ where $n$ is the length of the survival interval in the chosen time-units, $n$ can be interpreted as a parameter that is fixed by the modeller (e.g., by setting the time-interval length in MARK). In contrast, the model $S = (\loglog^{-1}(\beta_0 + \beta_1 x_1))^n$ is equivalent to $S = (\loglog^{-1}(\beta_0' + \beta_1 x_1))$ where $\beta_0'=\log(n)+\beta_0$. Hence, when using a loglog-link, changing the time-scale just amounts to changing the unit of the baseline hazard rate ($\exp(\beta_0)$) and the model remains the same.
 
 ### Figure 1
 Figure 1 in the main text illustrates the effect of replacing  $S_y$ with $(S_n)^n$ where $1/n$ is the length of the time-intervals used in the discrete model. To facilitate comparison of functional shapes, the intercepts and slopes of logit survival for all curves are defined such that yearly survival probability equals 0.05 when the covariate value is -2 and 0.95 when the covariate value is 2. If the models were fitted to data, the functional forms would be the same as in the figure, and predicted values would be in the same range, but the curves would not necessarily cross at the same place.
@@ -202,7 +202,7 @@ $\qquad$ Figure 4 illustrates the relationships between cause-specific mortality
 [^fn:frailty]: Unobserved individual heterogeneity in mortality hazard rates. In the presence of frailty, the population will be increasingly dominated by individuals with low mortality hazard rates at higher age-classes. Hence, age-related patterns in population level mortality rates are not representative of individual level patterns.
 
 ### Figure 3
-Figure 3 is produced by simulation. First, $10^5$ values of log hazard rates, $\log(h_1)$ and  $\log(h_2)$, were drawn from a bi-variate normal distribution with means given by the the colour legend (median($h$) = exp(mean(log($h$)))), standard deviations given above each panel, and correlations given by the x-axis. Cause-specific mortality probabilities where then computed from each of the $10^5$ samples, and the Pearson correlation coefficients between them where then computed and plotted on the y-axis.
+Figure 3 is produced by simulation. First, $10^5$ values of log hazard rates, $\log(h_1)$ and  $\log(h_2)$, were drawn from a bi-variate normal distribution with means given by the the colour legend (median($h$) = exp(mean(log($h$)))), standard deviations given above each panel, and correlations given by the x-axis. Cause-specific mortality probabilities where then computed from each of the $10^5$ samples, and the Pearson correlation coefficients between them where computed and plotted on the y-axis.
 
 #### Code - Figure 3
 ```{r, fig.height=4, fig.width=7, fig.cap="See caption in the main text.", out.extra=''}
@@ -219,9 +219,10 @@ sim.cor = function(sigma, mu){
 		  rho*sigma[1]*sigma[2], sigma[2]^2), 2,2, byrow=T)
 		log.h = mvrnorm(100000, c(mu,mu), S)
 		h = exp(log.h)
+		hTot = apply(h, 1, sum)
 		# Cause-specific mortality probabilities from Table 1 in main text:
-		P1 = (1-exp(-(h[,1]+h[,2])))*h[,1]/(h[,1]+h[,2])
-		P2 = (1-exp(-(h[,1]+h[,2])))*h[,2]/(h[,1]+h[,2])
+		P1 = (1-exp(-hTot))*h[,1]/hTot
+		P2 = (1-exp(-hTot))*h[,2]/hTot
 		cor.P[i] = cor(P1,P2)
 	}
 	return(list(Rho=Rho, cor.P=cor.P))
@@ -362,7 +363,7 @@ $$h(t) = -\frac{\partial S(t)}{\partial t} \frac{1}{S(t)} = -\frac{\partial \log
 $\qquad$ Hence, for any given probability distribution for time of death $f(t)$, there is a corresponding hazard rate function $h(t)$, and vice versa. The probability distribution for time of death corresponding to a constant hazard rate $h(t)=h$ is the exponential distribution with mean $\int_0^\infty t f(t) dt = 1/h$. Hence, if an individual (hypothetically) maintains its current mortality hazard rate throughout life, its expected time until death (i.e., its "current life-expectancy") is $1/h$. The elasticity of $\lambda$ to current life-expectancy is then
 $$\frac{\partial \log(\lambda)}{\partial \log(1/h)} = -\frac{\partial \log(\lambda)}{\partial \log(h)} =-\epsilon_h$$
 
-#### Perspectives on hazard rates and models of stage-duration distributions \label{perspectives}
+### Perspectives on hazard rates and models of stage-duration distributions \label{perspectives}
 
 The notion of elasticity to life-expectancy introduced in section \ref{Ecle} above is similar to the notion of elasticity to stage-duration in the absence of mortality (de Valpine et al. 2014). Structured population models based on stage-duration distributions (de Valpine et al. 2014) may be specified by either specifying the stage-duration distribution itself, $f(t)$, or by specifying the corresponding hazard function $h(t)$ (see relationships in section \ref{Ecle}). If individuals can leave a certain state to $K>1$ other states ('death' being one of them), the unconditional state-duration distribution is the probability distribution corresponding to the total hazard rate $h_{tot} (t) = \sum_{k=1}^K h_k(t)$, where $h_k(t)$ are the transition specific hazard rates. It is, however, often of greater interest to study the probability distributions for age or time of state-transition conditional on survival. For example, Ergon et al. (2009) estimated the latent distributions[^fn:latent_distribution] for seasonal timing of onset of reproduction in populations of overwintering field voles.
 
@@ -560,7 +561,7 @@ title("(a)", outer=T, adj=0.05, line=-2)
 ```{r, fig.height=6, fig.width=9, fig.cap="See caption in the main text.", out.extra=''}
 filled.contour(Sj, Sa, log(Er.h), levels=bins, nlevels=18, col=Col,
         plot.axes={axis(1); axis(2); text(c(0.2, 0.6), c(0.6, 0.2), c("a","b"), cex=1.3)},
-        plot.title = title("Elasticity ratio -  - mortality rate", cex.main=1.1,
+        plot.title = title("Elasticity ratio - mortality rate", cex.main=1.1,
                                   xlab="Juvenile survival probability", ylab="Adult survival probability"),
         key.title = title(main = "ln(ratio)", cex.main=0.9, line=1))
 title("(b)", outer=T, adj=0.05, line=-2)
