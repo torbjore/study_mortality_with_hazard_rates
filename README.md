@@ -1,4 +1,5 @@
 ﻿# The utility of mortality hazard rates in population analyses
+[![DOI](https://zenodo.org/badge/120482360.svg)](https://zenodo.org/badge/latestdoi/120482360)
 
 Author: Torbjørn Ergon
 
