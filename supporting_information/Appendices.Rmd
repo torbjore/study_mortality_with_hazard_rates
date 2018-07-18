@@ -16,9 +16,9 @@ title: "Supporting information for 'The utility of mortality hazard rates in pop
 
 author: \bigskip Torbj\o rn Ergon$^{a*}$, \O rnulf Borgan$^{b}$, Chloe Rebecca Nater$^{a}$ and Yngvild Vindenes$^{a}$
 
-date: \small $^{a}$Centre for Ecological and Evolutionary Synthesis, University of Oslo, P.O. Box 1066 Blindern, 0316 Oslo, Norway. \newline $^{b}$Department of Mathematics, University of Oslo, P.O. Box 1066 Blindern, 0316 Oslo, Norway. \newline $^{*}$Corresponding author, e-mail t.h.ergon@ibv.uio.no \newline "`r Sys.Date()`"
+date: \small $^{a}$Centre for Ecological and Evolutionary Synthesis, University of Oslo, P.O. Box 1066 Blindern, 0316 Oslo, Norway. \newline $^{b}$Department of Mathematics, University of Oslo, P.O. Box 1066 Blindern, 0316 Oslo, Norway. \newline $^{*}$Corresponding author, e-mail t.h.ergon@ibv.uio.no \newline `r Sys.Date()`
 
-abstract: This document provides additional information relating to each section and figure in the main article (<https://doi.org/10.1101/216739>; doi will be updated when available from Wiley). The document is written in R Markdown and the source file (.Rmd) is available at <https://github.com/torbjore/study_mortality_with_hazard_rates>. It contains all R-code needed to reproduce all figures and examples in this document (see <https://rmarkdown.rstudio.com/>).
+abstract: This document provides additional information relating to each section and figure in the main article (<https://doi.org/10.1111/2041-210X.13059>). The document is written in R Markdown and the source file (.Rmd) is available at <https://github.com/torbjore/study_mortality_with_hazard_rates>. It contains all R-code needed to reproduce all figures and examples in this document (see <https://rmarkdown.rstudio.com/>).
 ---
 
 \clearpage
