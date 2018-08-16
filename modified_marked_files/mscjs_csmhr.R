@@ -80,8 +80,8 @@ mscjs_csmhr = function (x, ddl, dml, model_data = NULL, parameters, accumulate =
   slist = marked:::simplify_indices(cbind(pdm, pfix))
   write(ncol(pdm), con, append = TRUE)                                        # kp
   write(length(slist$set), con, append = TRUE)                                # nrowp
-  write(t(pdm[slist$set, , drop = FALSE]), con, ncolumns = ncol(pdm), 
-        append = TRUE)                                                          # pdm                                                  
+  if(ncol(pdm)>0)
+    write(t(pdm[slist$set, , drop = FALSE]), con, ncolumns = ncol(pdm), append = TRUE)                                                          # pdm                                                  
   write(pfix[slist$set], con, append = TRUE)                                  # pfix
   write(slist$indices[ddl$p.indices], con, ncolumns = n, append = TRUE)       # pindex
   psidm = as.matrix(model_data$Psi.dm)
@@ -91,16 +91,18 @@ mscjs_csmhr = function (x, ddl, dml, model_data = NULL, parameters, accumulate =
   slist = marked:::simplify_indices(cbind(psidm, psifix))
   write(ncol(psidm), con, append = TRUE)                                      # kpsi
   write(length(slist$set), con, append = TRUE)                                # nrowpsi
-  write(t(psidm[slist$set, , drop = FALSE]), con, ncolumns = ncol(psidm), 
-        append = TRUE)
+  if(ncol(psidm)>0)
+    write(t(psidm[slist$set, , drop = FALSE]), con, ncolumns = ncol(psidm), append = TRUE)
   write(psifix[slist$set], con, append = TRUE)
   write(slist$indices[ddl$Psi.indices], con, ncolumns = n, append = TRUE)
   close(con)
   
   con = file(paste(tpl, ".pin", sep = ""), open = "wt")
   #    write(par$S, con, ncolumns = length(par$S), append = FALSE)
-  write(par$p, con, ncolumns = length(par$p), append = TRUE)
-  write(par$Psi, con, ncolumns = length(par$Psi), append = FALSE)
+  if(ncol(pdm)>0)
+    write(par$p, con, ncolumns = length(par$p), append = TRUE)
+  if(ncol(psidm)>0)
+    write(par$Psi, con, ncolumns = length(par$Psi), append = FALSE)
   close(con)
   if (hessian) 
     xx = run_admb(tpl, extra.args = extra.args)
