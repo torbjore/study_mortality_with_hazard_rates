@@ -3,9 +3,9 @@
 
 Author: Torbjørn Ergon
 
-Date: 15 June 2018
+Date: 19 July 2018
 
-These files accompany the paper «The utility of mortality hazard rates in population analyses» - https://doi.org/10.1101/216739
+These files accompany the paper «The utility of mortality hazard rates in population analyses» - https://doi.org/10.1111/2041-210X.13059
 
 
 * The directory ‘supporting_information’ contains the R Markdown file used to generate the Supporting Information containing 3 appendices.
